@@ -1,0 +1,62 @@
+{
+  "name": "geolint",
+  "version": "0.1.0",
+  "description": "Lint your website for AI search readiness. Audit AI crawler access, llms.txt, structured data and citability for ChatGPT, Perplexity, Claude & co.",
+  "keywords": [
+    "geo",
+    "generative-engine-optimization",
+    "llms-txt",
+    "llms.txt",
+    "ai-search",
+    "seo",
+    "aeo",
+    "chatgpt",
+    "perplexity",
+    "claude",
+    "ai-crawler",
+    "robots-txt",
+    "structured-data",
+    "lint",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "Ilias Aberkane",
+  "type": "module",
+  "bin": {
+    "geolint": "dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "action.yml", "action"],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check --write .",
+    "lint:ci": "biome check .",
+    "typecheck": "tsc --noEmit",
+    "geolint": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
