@@ -20,7 +20,7 @@
  */
 import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
@@ -429,6 +429,7 @@ async function main() {
 
   const html = indexHtml(cards, logoSvg, new Date().toISOString());
   await writeFile(join(SITE_DIR, 'index.html'), html, 'utf8');
+  await copyFile(join(ROOT, 'llms.txt'), join(SITE_DIR, 'llms.txt'));
   console.log(`\nwrote ${join('site', 'index.html')} (${cards.length} cards)`);
 }
 
