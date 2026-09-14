@@ -1,8 +1,7 @@
-name: geolint
+name: geolint AI Search Audit
 description: >-
-  Audit a website for AI-search readiness (GEO): AI crawler access, llms.txt,
-  structured data and citability. Produces a GEO score, a SARIF report for code
-  scanning and a markdown report for job summaries / PR comments.
+  Audit a website for AI-search readiness: AI crawler access, llms.txt,
+  structured data and citability. SARIF + score.
 author: iliasabk
 branding:
   icon: check-circle
