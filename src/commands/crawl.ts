@@ -1,5 +1,5 @@
 import { load } from 'cheerio';
-import { createScanner, resolveOptions, scan } from '../core/engine.js';
+import { createScanner, resolveOptions } from '../core/engine.js';
 import { fetchPage } from '../core/fetch.js';
 import { fetchRobots, isAllowed } from '../core/robots.js';
 import { gradeFor } from '../core/score.js';
@@ -137,8 +137,11 @@ export async function crawlPages(
   const concurrency = opts.concurrency ?? 4;
   const resolved = resolveOptions({ timeout: opts.timeout, userAgent: opts.userAgent });
   const start = new URL(normalizeUrl(startUrl));
-  const origin = start.origin;
-  const robots = await fetchRobots(origin, resolved);
+  // The effective origin is re-based on the entry page's finalUrl once it is
+  // fetched — a common apex↔www or http→https redirect would otherwise make
+  // every resolved link look cross-origin and truncate the crawl to 1 page.
+  let origin = start.origin;
+  let robots = await fetchRobots(origin, resolved);
 
   interface Item {
     url: string;
@@ -166,6 +169,12 @@ export async function crawlPages(
     }
     try {
       const base = new URL(page.finalUrl || url);
+      // Entry page (seq 0) processed first: adopt its post-redirect origin.
+      if (s === 0 && base.origin !== origin) {
+        origin = base.origin;
+        seen.add(normalizePageUrl(base));
+        robots = await fetchRobots(origin, resolved);
+      }
       for (const link of extractLinks(page.html, base, origin, robots.groups)) {
         if (seen.size >= maxPages) {
           break;
@@ -221,6 +230,10 @@ export function buildSiteReport(url: string, pages: ScanReport[], startedAt: num
 export interface RunCrawlOptions extends CrawlPagesOptions {
   format?: ReportFormat;
   failUnder?: number;
+  /** Rule selection applied to page scans (entry page runs the full set minus ignores). */
+  only?: string[];
+  ignore?: string[];
+  category?: RuleCategory[];
   verbose?: boolean;
   color?: boolean;
   /** Status sink for progress lines. Defaults to stderr for pretty, silent otherwise. */
@@ -256,23 +269,34 @@ export async function runCrawl(input: string, opts: RunCrawlOptions = {}): Promi
     onPage: opts.verbose ? (p) => status(`fetched ${p.url}`) : undefined,
   });
 
-  const scanOpts: ScanOptions = { timeout: opts.timeout, userAgent: opts.userAgent };
+  const scanOpts: ScanOptions = {
+    timeout: opts.timeout,
+    userAgent: opts.userAgent,
+    only: opts.only,
+    ignore: opts.ignore,
+    categories: opts.category,
+  };
   const reports: (ScanReport | undefined)[] = new Array(pages.length);
   const entry = pages[0];
+  // Reuse the crawled PageData — each page was already fetched once for link
+  // extraction; scanning must not fetch it a second time.
   if (entry) {
     status(`Scanning ${entry.url} (entry page, full rules)…`);
     try {
-      reports[0] = await scan(entry.url, scanOpts);
+      reports[0] = await createScanner(scanOpts).scanPage(entry.url, entry.page);
     } catch (err) {
       status(`entry scan failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  const pageScanner = createScanner({ ...scanOpts, categories: PAGE_CATEGORIES });
-  const rest = pages.slice(1).map((p, i) => ({ url: p.url, idx: i + 1 }));
-  await runPool(rest, opts.concurrency ?? 4, async ({ url: u, idx }) => {
+  const pageScanner = createScanner({
+    ...scanOpts,
+    categories: opts.category ?? PAGE_CATEGORIES,
+  });
+  const rest = pages.slice(1).map((p, i) => ({ url: p.url, idx: i + 1, page: p.page }));
+  await runPool(rest, opts.concurrency ?? 4, async ({ url: u, idx, page }) => {
     try {
-      reports[idx] = await pageScanner.scanPage(u);
+      reports[idx] = await pageScanner.scanPage(u, page);
       if (opts.verbose) {
         status(`scanned ${u}`);
       }

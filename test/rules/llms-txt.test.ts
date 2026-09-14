@@ -125,16 +125,15 @@ describe('llms-txt/broken-links', () => {
     expect(await brokenLinksRule.check(ctx)).toEqual([]);
   });
 
-  it('reports a link whose fetch throws', async () => {
+  it('does not count a throwing fetch as a broken link', async () => {
+    // Timeout / budget exhaustion is not evidence that the link is broken.
     const ctx = makeCtx({
       llmsTxt: makeLlmsTxt(raw),
       fetchPage: async () => {
         throw new Error('budget exhausted');
       },
     });
-    const findings = await brokenLinksRule.check(ctx);
-    expect(findings).toHaveLength(1);
-    expect(findings[0]!.severity).toBe('warn');
+    expect(await brokenLinksRule.check(ctx)).toEqual([]);
   });
 });
 

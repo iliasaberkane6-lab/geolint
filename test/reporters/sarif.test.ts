@@ -68,7 +68,7 @@ describe('sarif — ScanReport', () => {
     expect(https.shortDescription.text).toBe('Site served over HTTPS');
     expect(https.defaultConfiguration.level).toBe('error');
     expect(https.helpUri).toBe(
-      'https://github.com/iliasaberkane/geolint/blob/main/docs/rules.md#technical-https',
+      'https://github.com/iliasaberkane/geolint/blob/main/docs/rules.md#rule-technical-https',
     );
     expect(https.name).toBe('TechnicalHttps');
   });
@@ -89,7 +89,7 @@ describe('sarif — ScanReport', () => {
       (r) => r.id === 'content/zzz-not-a-real-rule',
     )!;
     expect(stub).toBeDefined();
-    expect(stub.helpUri).toContain('#content-zzz-not-a-real-rule');
+    expect(stub.helpUri).toContain('#rule-content-zzz-not-a-real-rule');
     expect(stub.helpUri).not.toContain('content/zzz');
     expect(stub.defaultConfiguration.level).toBe('warning'); // from finding severity
     expect(stub.shortDescription.text.length).toBeGreaterThan(0);

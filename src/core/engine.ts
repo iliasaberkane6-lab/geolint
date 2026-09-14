@@ -28,6 +28,12 @@ export function resolveOptions(options: ScanOptions = {}): ResolvedScanOptions {
   };
 }
 
+/** Rule ids requested via only/ignore that do not exist in the registry. */
+export function unknownRuleIds(options: ScanOptions, registry: Rule[] = allRules): string[] {
+  const known = new Set(registry.map((r) => r.id));
+  return [...(options.only ?? []), ...(options.ignore ?? [])].filter((id) => !known.has(id));
+}
+
 export function selectRules(options: ScanOptions, registry: Rule[] = allRules): Rule[] {
   let rules = registry;
   if (options.categories && options.categories.length > 0) {
@@ -48,25 +54,31 @@ export function selectRules(options: ScanOptions, registry: Rule[] = allRules): 
  */
 export function createScanner(options: ScanOptions = {}) {
   const resolved = resolveOptions(options);
-  let extraFetches = 0;
   const robotsCache = new Map<string, Awaited<ReturnType<typeof fetchRobots>>>();
   const llmsCache = new Map<string, Awaited<ReturnType<typeof fetchLlmsTxt>>>();
 
-  const budgetedFetch = async (url: string): Promise<PageData> => {
-    if (extraFetches >= resolved.maxExtraFetches) {
-      throw new Error(`extra fetch budget exhausted (${resolved.maxExtraFetches})`);
-    }
-    extraFetches++;
-    return fetchPage(url, resolved);
-  };
-
-  async function scanPage(url: string): Promise<ScanReport> {
+  async function scanPage(url: string, prefetched?: PageData | null): Promise<ScanReport> {
     const startedAt = Date.now();
-    let page: PageData | null = null;
-    try {
-      page = await fetchPage(url, resolved);
-    } catch {
-      page = null;
+    // The auxiliary-fetch budget is per page, not per scanner — a 25-page
+    // crawl must not exhaust it after the first 10 pages.
+    let extraFetches = 0;
+    const budgetedFetch = async (u: string): Promise<PageData> => {
+      if (extraFetches >= resolved.maxExtraFetches) {
+        throw new Error(`extra fetch budget exhausted (${resolved.maxExtraFetches})`);
+      }
+      extraFetches++;
+      return fetchPage(u, resolved);
+    };
+
+    let page: PageData | null;
+    if (prefetched !== undefined) {
+      page = prefetched;
+    } else {
+      try {
+        page = await fetchPage(url, resolved);
+      } catch {
+        page = null;
+      }
     }
     const origin = new URL(page?.finalUrl ?? url).origin;
 
@@ -101,6 +113,7 @@ export function createScanner(options: ScanOptions = {}) {
             {
               ruleId: rule.id,
               severity: 'info' as const,
+              internal: true,
               message: `rule failed: ${err instanceof Error ? err.message : String(err)}`,
             },
           ];
@@ -110,15 +123,21 @@ export function createScanner(options: ScanOptions = {}) {
     const findings = settled.flat();
     const { score, grade, categories } = computeScore(rules, findings);
 
-    const bots = robots.raw
-      ? AI_BOTS.map((b) => ({
-          id: b.id,
-          name: b.name,
-          company: b.company,
-          purpose: b.purpose,
-          allowed: isAllowed(robots.groups, b.id, '/').allowed,
-        }))
-      : [];
+    // The bot matrix reflects what robots.txt actually means: a parsed file
+    // is evaluated per bot; a 404/absent file means everything is allowed
+    // (the RFC default); a 5xx means crawlers assume disallow-all; an
+    // unreachable file means unknown.
+    const bots = AI_BOTS.map((b) => ({
+      id: b.id,
+      name: b.name,
+      company: b.company,
+      purpose: b.purpose,
+      allowed: robots.raw
+        ? isAllowed(robots.groups, b.id, '/').allowed
+        : robots.status === 0
+          ? null
+          : robots.status < 500,
+    }));
 
     return {
       tool: { name: TOOL_NAME, version: VERSION },

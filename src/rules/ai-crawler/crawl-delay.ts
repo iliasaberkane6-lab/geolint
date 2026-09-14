@@ -1,5 +1,5 @@
 import { AI_BOTS } from '../../core/bots.js';
-import { matchGroup } from '../../core/robots.js';
+import { matchGroups } from '../../core/robots.js';
 import type { RobotGroup, Rule, RuleFinding } from '../../core/types.js';
 
 export const crawlDelayRule: Rule = {
@@ -14,14 +14,15 @@ export const crawlDelayRule: Rule = {
     if (!robots || robots.raw == null || robots.groups.length === 0) {
       return [];
     }
-    // One finding per group (a wildcard delay would otherwise report ~30 bots).
+    // One finding per group (a wildcard delay would otherwise report ~50 bots).
     const byGroup = new Map<RobotGroup, string[]>();
     for (const bot of AI_BOTS) {
-      const group = matchGroup(robots.groups, bot.id);
-      if (group && group.crawlDelay !== undefined) {
-        const list = byGroup.get(group) ?? [];
-        list.push(bot.name);
-        byGroup.set(group, list);
+      for (const group of matchGroups(robots.groups, bot.id)) {
+        if (group.crawlDelay !== undefined) {
+          const list = byGroup.get(group) ?? [];
+          list.push(bot.name);
+          byGroup.set(group, list);
+        }
       }
     }
     const findings: RuleFinding[] = [];

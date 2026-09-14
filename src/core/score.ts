@@ -50,7 +50,10 @@ export function computeScore(
 
   for (const cat of RULE_CATEGORIES) {
     const catRules = rules.filter((r) => r.category === cat);
-    const catFindings = findings.filter((f) => catRules.some((r) => r.id === f.ruleId));
+    // Internal findings are tool diagnostics, not site faults — never scored.
+    const catFindings = findings.filter(
+      (f) => !f.internal && catRules.some((r) => r.id === f.ruleId),
+    );
     const counts = { errors: 0, warnings: 0, infos: 0 };
     for (const f of catFindings) {
       if (f.severity === 'error') {

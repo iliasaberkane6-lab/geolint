@@ -1,5 +1,18 @@
-export { scan, createScanner, selectRules, resolveOptions } from './core/engine.js';
-export { parseRobots, isAllowed, matchGroup, blocksRoot, fetchRobots } from './core/robots.js';
+export {
+  scan,
+  createScanner,
+  selectRules,
+  resolveOptions,
+  unknownRuleIds,
+} from './core/engine.js';
+export {
+  parseRobots,
+  isAllowed,
+  matchGroup,
+  matchGroups,
+  blocksRoot,
+  fetchRobots,
+} from './core/robots.js';
 export { parseLlmsTxt, fetchLlmsTxt } from './core/llmstxt.js';
 export { extractJsonLd, jsonLdTypes, CITABILITY_SCHEMA_TYPES } from './core/schema.js';
 export { AI_BOTS, botsByPurpose, citationCriticalBots } from './core/bots.js';

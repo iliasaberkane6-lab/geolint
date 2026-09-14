@@ -7,10 +7,10 @@ export interface JsonLdBlock {
   raw: string;
 }
 
-/** Extract every <script type="application/ld+json"> block. */
+/** Extract every <script type="application/ld+json"> block (incl. charset variants). */
 export function extractJsonLd($: CheerioAPI): JsonLdBlock[] {
   const blocks: JsonLdBlock[] = [];
-  $('script[type="application/ld+json"]').each((_, el) => {
+  $('script[type^="application/ld+json"]').each((_, el) => {
     const raw = $(el).contents().text().trim();
     if (!raw) {
       return;

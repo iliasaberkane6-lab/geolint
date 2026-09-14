@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { scan } from '../core/engine.js';
+import { scan, unknownRuleIds } from '../core/engine.js';
 import type { Finding, RuleCategory, ScanOptions, ScanReport, Severity } from '../core/types.js';
 import {
   type RenderOptions,
@@ -151,6 +151,11 @@ export async function runCheck(input: string, opts: CheckOptions = {}): Promise<
     ignore: opts.ignore,
     categories: opts.category,
   };
+
+  const unknown = unknownRuleIds(scanOpts);
+  for (const id of unknown) {
+    status(`warning: unknown rule id '${id}' — run 'geolint rules' for the list`);
+  }
 
   status(`Scanning ${url}…`);
   const report = await scan(url, scanOpts);

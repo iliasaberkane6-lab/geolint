@@ -35,8 +35,9 @@ staging and the bundled demo site. Non-http(s) schemes are rejected.
 geolint fetches with its own UA
 (`Mozilla/5.0 (compatible; geolint/<version>; +https://github.com/iliasaberkane/geolint)`),
 follows redirects, and reports the final URL. Each scan may perform a bounded
-number of auxiliary same-origin fetches (robots.txt, llms.txt, sitemap,
-llms-full.txt) — capped at 10.
+number of auxiliary fetches (robots.txt, llms.txt, sitemap, llms-full.txt and
+sampled llms.txt links — the latter may be cross-origin) — capped at 10 per
+page.
 
 ## `geolint check <url>`
 
@@ -114,8 +115,9 @@ npx geolint check https://example.com --baseline .geolint-baseline.json
 ```
 
 `--baseline` prints each regression and resolution to stderr
-(`regression [rule-id] …` / `resolved [rule-id] …`) and exits `1` if any finding
-is new. Combine both flags for a floor *and* drift detection.
+(`regression [rule-id] …` / `resolved [rule-id] …`) and exits `1` when a new
+error- or warn-severity finding appears (info findings don't gate). Combine
+both flags for a floor *and* drift detection.
 
 ## `geolint crawl <url>`
 
@@ -133,11 +135,16 @@ per-page findings (multi-page findings are marked `×N pages`).
 | `-o, --output <file>` | Write the site report to a file instead of stdout |
 | `--fail-under <0-100>` | Exit `1` when the site score is below this threshold |
 | `--timeout <ms>` | Per-request fetch timeout in ms |
+| `--user-agent <ua>` | Custom User-Agent for fetching |
+| `--only <ids...>` | Only run these rule ids |
+| `--ignore <ids...>` | Skip these rule ids |
+| `--category <cats...>` | Only run these categories |
 | `--verbose` | Log each fetched/scanned page to stderr |
 | `--no-color` | Disable colored output |
 
 Note: `--verbose` means something different on `check` (show info-severity
-findings) and `crawl` (log progress per page).
+findings) and `crawl` (log progress per page). Page scans reuse the crawled
+HTML — each page is fetched once, not twice.
 
 ```bash
 npx geolint crawl https://example.com --max-pages 50 --fail-under 75

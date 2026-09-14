@@ -86,7 +86,8 @@ broken or blocked), `warn` is a real but softer problem, `info` is advisory.
 1. Create `src/commands/<name>.ts` exporting a registration function.
 2. Wire it in `src/commands/index.ts` inside `registerCommands()` — `cli.ts`
    calls that exactly once; keep the signature stable.
-3. Reuse `scan()` / `crawl()` from `src/core/engine.ts` and render through
+3. Reuse `scan()` / `createScanner()` from `src/core/engine.ts` (or
+   `crawlPages()` from `src/commands/crawl.ts`) and render through
    `src/reporters/index.ts` so `--format` behaves consistently.
 4. Respect the shared exit-code contract: `0` pass, `1` gate/baseline failure,
    `2` runtime error.

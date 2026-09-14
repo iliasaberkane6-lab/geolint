@@ -14,16 +14,23 @@ export const staleTokensRule: Rule = {
       return [];
     }
     const retired = AI_BOTS.filter((b) => b.retired);
+    const live = AI_BOTS.filter((b) => !b.retired);
     const findings: RuleFinding[] = [];
     const seen = new Set<string>();
     for (const group of robots.groups) {
       for (const agent of group.agents) {
+        if (agent === '*') {
+          continue;
+        }
         const bot = retired.find(
-          (b) =>
-            (agent === '*' ? false : b.id.toLowerCase().startsWith(agent)) ||
-            agent === b.id.toLowerCase(),
+          (b) => b.id.toLowerCase().startsWith(agent) || agent === b.id.toLowerCase(),
         );
-        if (!bot || seen.has(bot.id)) {
+        // 'User-agent: claude' governs live Claude bots too — only flag
+        // tokens that match a retired bot and no live one.
+        const governsLive = live.some(
+          (b) => b.id.toLowerCase().startsWith(agent) || agent === b.id.toLowerCase(),
+        );
+        if (!bot || governsLive || seen.has(bot.id)) {
           continue;
         }
         seen.add(bot.id);

@@ -13,8 +13,19 @@ export const noH1Rule: Rule = {
     }
     const $ = ctx.$;
     const h1s = $('h1');
-    const empty = h1s.length === 0 || h1s.toArray().every((el) => $(el).text().trim() === '');
-    if (!empty) {
+    const nonEmpty = h1s.toArray().filter((el) => $(el).text().trim() !== '');
+    if (nonEmpty.length > 1) {
+      return [
+        {
+          severity: 'info',
+          message: `${nonEmpty.length} <h1> elements on the page`,
+          detail:
+            'A single H1 anchors the page topic; several competing H1s dilute the signal machines use to understand it.',
+          fix: 'Keep one descriptive <h1>; demote the others to <h2> or below.',
+        },
+      ];
+    }
+    if (nonEmpty.length === 1) {
       return [];
     }
     return [

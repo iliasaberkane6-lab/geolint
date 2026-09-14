@@ -16,7 +16,7 @@ export function parseLlmsTxt(raw: string): LlmsTxtParsed {
   let current: LlmsTxtSection | null = null;
   let linkCount = 0;
 
-  const linkRe = /\[([^\]]+)\]\(([^)\s]+)[^)]*\)/g;
+  const linkRe = /\[([^\]]+)\]\(([^()\s]*(?:\([^()\s]*\)[^()\s]*)*)(?:\s+"[^"]*")?\)/g;
 
   for (const line of lines) {
     const trimmed = line.trim();

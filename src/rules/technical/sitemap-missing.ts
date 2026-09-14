@@ -24,7 +24,8 @@ export const sitemapMissingRule: Rule = {
       }
       return [warning(`${origin}/sitemap.xml → HTTP ${res.status}`)];
     } catch {
-      return [warning(`${origin}/sitemap.xml could not be fetched`)];
+      // A failed fetch (timeout, exhausted budget) is not evidence of absence.
+      return [];
     }
   },
 };

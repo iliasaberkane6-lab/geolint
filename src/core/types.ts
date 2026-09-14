@@ -41,6 +41,8 @@ export interface RuleFinding {
 
 export interface Finding extends RuleFinding {
   ruleId: string;
+  /** Tool-internal diagnostics (e.g. a rule that threw) — reported but never scored. */
+  internal?: boolean;
 }
 
 export interface PageData {

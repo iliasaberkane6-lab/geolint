@@ -33,6 +33,10 @@ interface CrawlCliOptions {
   output?: string;
   failUnder?: number;
   timeout?: number;
+  userAgent?: string;
+  only?: string[];
+  ignore?: string[];
+  category?: RuleCategory[];
   verbose: boolean;
   color: boolean;
 }
@@ -114,6 +118,10 @@ export function registerCommands(program: Command): void {
       parseScore,
     )
     .option('--timeout <ms>', 'fetch timeout in milliseconds', parsePositiveInt)
+    .option('--user-agent <ua>', 'custom User-Agent for fetching')
+    .option('--only <ids...>', 'only run these rule ids')
+    .option('--ignore <ids...>', 'skip these rule ids')
+    .addOption(new Option('--category <cats...>').choices(RULE_CATEGORIES))
     .option('--verbose', 'log each fetched/scanned page to stderr', false)
     .option('--no-color', 'disable colored output')
     .action(async (url: string, opts: CrawlCliOptions) => {
@@ -124,6 +132,10 @@ export function registerCommands(program: Command): void {
         format: opts.format,
         failUnder: opts.failUnder,
         timeout: opts.timeout,
+        userAgent: opts.userAgent,
+        only: opts.only,
+        ignore: opts.ignore,
+        category: opts.category,
         verbose: opts.verbose,
         color: opts.color ? undefined : false,
       });

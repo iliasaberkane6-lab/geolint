@@ -34,7 +34,12 @@ export function parseRobots(raw: string): { groups: RobotGroup[]; sitemaps: stri
         groups.push(current);
         seenMemberLine = false;
       }
-      current.agents.push(value.toLowerCase());
+      // Ignore malformed 'User-agent:' lines (empty value, or nothing left
+      // after stripping a version suffix like 'User-agent: /1.0').
+      const agent = normalizeAgent(value);
+      if (agent) {
+        current.agents.push(agent);
+      }
     } else if (field === 'allow' || field === 'disallow') {
       if (current) {
         current.rules.push({ type: field, path: value });
@@ -58,45 +63,121 @@ export function parseRobots(raw: string): { groups: RobotGroup[]; sitemaps: stri
 }
 
 /**
- * Pick the group whose agent token most specifically matches `token`.
- * Longest matching prefix wins; '*' matches anything. Returns undefined
- * when no group matches.
+ * Normalize a User-agent value per RFC 9309 / Google's spec: version and
+ * non-token suffixes are ignored — 'googlebot/1.2' and 'googlebot*' are
+ * equivalent to 'googlebot'.
  */
-export function matchGroup(groups: RobotGroup[], token: string): RobotGroup | undefined {
+function normalizeAgent(value: string): string {
+  let v = value.toLowerCase().trim();
+  if (v === '*') {
+    return v;
+  }
+  v = v.replace(/\/[^\s]*$/, '');
+  v = v.replace(/\*+$/, '');
+  return v;
+}
+
+/**
+ * All groups whose agent token matches `token` at the longest matching
+ * prefix. RFC 9309 §2.2.1: when more than one group matches, their rules
+ * are combined — so this returns every group tied at the best match
+ * length ('*' matches at length 0).
+ */
+export function matchGroups(groups: RobotGroup[], token: string): RobotGroup[] {
   const t = token.toLowerCase();
-  let best: RobotGroup | undefined;
   let bestLen = -1;
+  const best: RobotGroup[] = [];
   for (const g of groups) {
     for (const agent of g.agents) {
-      if (agent === '*') {
-        if (bestLen < 0) {
-          best = g;
-          bestLen = 0;
-        }
+      const len = agent === '*' ? 0 : t.startsWith(agent) ? agent.length : -1;
+      if (len < 0 || len < bestLen) {
         continue;
       }
-      if (t.startsWith(agent) && agent.length > bestLen) {
-        best = g;
-        bestLen = agent.length;
+      if (len > bestLen) {
+        bestLen = len;
+        best.length = 0;
+      }
+      if (!best.includes(g)) {
+        best.push(g);
       }
     }
   }
   return best;
 }
 
+/**
+ * The single merged group RFC 9309 produces for `token`: rules of all
+ * equally-specific matching groups combined, crawl-delay of the last one
+ * that sets it. Returns undefined when no group matches.
+ */
+export function matchGroup(groups: RobotGroup[], token: string): RobotGroup | undefined {
+  const matched = matchGroups(groups, token);
+  if (matched.length === 0) {
+    return undefined;
+  }
+  const merged: RobotGroup = { agents: [], rules: [] };
+  for (const g of matched) {
+    merged.agents.push(...g.agents);
+    merged.rules.push(...g.rules);
+    if (g.crawlDelay !== undefined) {
+      merged.crawlDelay = g.crawlDelay;
+    }
+  }
+  return merged;
+}
+
+/**
+ * Decode percent-encoded octets that represent unreserved characters
+ * (RFC 9309 §2.2.2 requires this before comparison). Reserved chars like
+ * %2F stay encoded.
+ */
+const UNRESERVED_RE = /^[A-Za-z0-9\-._~]$/;
+function decodePath(p: string): string {
+  return p.replace(/%([0-9A-Fa-f]{2})/g, (m, hex) => {
+    const ch = String.fromCharCode(Number.parseInt(hex, 16));
+    return UNRESERVED_RE.test(ch) ? ch : m;
+  });
+}
+
+/**
+ * Wildcard path matcher without regex: segments split on '*' must appear
+ * in order, the first must be a prefix, '$' anchors the last to the end.
+ * Linear in path length — no backtracking on hostile patterns.
+ */
 function pathMatches(pattern: string, path: string): boolean {
   if (pattern === '') {
     return false;
   }
   const anchored = pattern.endsWith('$');
-  const pat = anchored ? pattern.slice(0, -1) : pattern;
-  // Escape regex chars except '*', then translate '*' → '.*'
-  const body = pat
-    .split('*')
-    .map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    .join('.*');
-  const regex = new RegExp(`^${body}${anchored ? '$' : ''}`);
-  return regex.test(path);
+  const pat = decodePath(anchored ? pattern.slice(0, -1) : pattern);
+  const target = decodePath(path);
+  const parts = pat.split('*');
+  if (parts.length === 1) {
+    return anchored ? target === pat : target.startsWith(pat);
+  }
+  const first = parts[0] ?? '';
+  if (first !== '' && !target.startsWith(first)) {
+    return false;
+  }
+  let pos = first.length;
+  // Middle segments (and the last when unanchored) must occur in order.
+  const middle = anchored ? parts.slice(1, -1) : parts.slice(1);
+  for (const part of middle) {
+    if (part === '') {
+      continue;
+    }
+    const idx = target.indexOf(part, pos);
+    if (idx === -1) {
+      return false;
+    }
+    pos = idx + part.length;
+  }
+  if (!anchored) {
+    return true;
+  }
+  const last = parts[parts.length - 1] ?? '';
+  // The trailing segment must end the path without overlapping consumed parts.
+  return last === '' || (target.endsWith(last) && target.length - last.length >= pos);
 }
 
 /**

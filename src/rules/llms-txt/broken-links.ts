@@ -31,8 +31,8 @@ export const brokenLinksRule: Rule = {
           broken.push(`${url} (HTTP ${res.status})`);
         }
       } catch {
-        // A throw usually means the extra-fetch budget is exhausted — stop sampling.
-        broken.push(`${url} (fetch failed)`);
+        // A throw means timeout/network/budget — not evidence the link is
+        // broken. Stop sampling rather than report a false positive.
         break;
       }
     }

@@ -89,15 +89,14 @@ describe('technical/sitemap-missing', () => {
     expect(findings[0]!.evidence).toContain('/sitemap.xml');
   });
 
-  it('warns when the sitemap fetch throws', async () => {
+  it('does not warn when the sitemap fetch throws', async () => {
+    // A failed fetch is not evidence that the sitemap is missing.
     const ctx = makeCtx({
       fetchPage: async () => {
         throw new Error('budget exhausted');
       },
     });
-    const findings = await sitemapMissingRule.check(ctx);
-    expect(findings).toHaveLength(1);
-    expect(findings[0]!.severity).toBe('warn');
+    expect(await sitemapMissingRule.check(ctx)).toEqual([]);
   });
 
   it('passes when /sitemap.xml resolves', async () => {

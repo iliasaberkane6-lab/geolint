@@ -41,7 +41,8 @@ function humanize(id: string): string {
 }
 
 function helpUri(id: string): string {
-  return `${INFORMATION_URI}/blob/main/docs/rules.md#${id.replace(/\//g, '-')}`;
+  // Anchors in docs/rules.md are emitted as <a id="rule-<id-with-dashes>">.
+  return `${INFORMATION_URI}/blob/main/docs/rules.md#rule-${id.replace(/\//g, '-')}`;
 }
 
 function worstSeverity(findings: Finding[]): Severity {

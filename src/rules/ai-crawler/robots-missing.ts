@@ -13,6 +13,19 @@ export const robotsMissingRule: Rule = {
     if (robots === null || robots.status === 0) {
       return [];
     }
+    // RFC 9309 §2.3.1.2: a 5xx means "unavailable" — crawlers must assume
+    // the site is fully disallowed, not "everything allowed".
+    if (robots.status >= 500) {
+      return [
+        {
+          severity: 'error',
+          message: 'robots.txt returns a server error — crawlers treat this as disallow-all',
+          detail: `GET ${robots.url} returned HTTP ${robots.status}. Per RFC 9309, crawlers that get a 5xx assume the whole site is disallowed — AI bots may drop all of your pages until it recovers.`,
+          fix: 'Fix the 5xx on /robots.txt (or serve a minimal valid file).',
+          evidence: `HTTP ${robots.status} for ${robots.url}`,
+        },
+      ];
+    }
     const missing = robots.raw === null || (robots.status >= 400 && robots.status < 500);
     if (!missing) {
       return [];

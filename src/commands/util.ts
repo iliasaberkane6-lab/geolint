@@ -126,6 +126,6 @@ export function formatTable(headers: string[], rows: string[][]): string {
 }
 
 /** Stable identity used to match findings across reports and baselines. */
-export function findingKey(f: { ruleId: string; message: string }): string {
-  return `${f.ruleId} :: ${f.message}`;
+export function findingKey(f: { ruleId: string; severity: string; message: string }): string {
+  return `${f.ruleId} :: ${f.severity} :: ${f.message}`;
 }
