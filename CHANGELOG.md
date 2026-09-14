@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-14
+
+### Added
+
+- **MCP server**: `geolint mcp` runs a [Model Context
+  Protocol](https://modelcontextprotocol.io) server over stdio so Claude
+  Desktop, Cursor, VS Code and Windsurf can use geolint natively. Five
+  read-only tools — `audit_url`, `generate_llms_txt`, `compare_urls`,
+  `list_rules`, `list_ai_bots` — with structured output and per-call
+  timeouts (see [docs/mcp.md](docs/mcp.md)). The SDK loads lazily, so
+  `check`/`crawl` startup is unaffected.
+- **Score badge**: `check --badge [file]` writes a self-contained,
+  shields-style SVG badge and prints a paste-ready README snippet;
+  `--badge-endpoint <file>` writes a shields.io endpoint JSON for
+  CI-regenerated live badges (see [docs/badges.md](docs/badges.md)).
+- Library exports: `badgeSvg`, `shieldsEndpointJson`, `badgeMarkdown`.
+
 ## [0.1.0] - 2026-09-14
 
 First public release of geolint — lint your website for AI-search readiness.
@@ -31,5 +48,6 @@ First public release of geolint — lint your website for AI-search readiness.
 - Fetch layer with per-request timeout (`--timeout`), redirect handling and a
   bounded same-origin fetch budget for sitemap/llms-full.txt discovery.
 
-[unreleased]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/iliasaberkane6-lab/geolint/releases/tag/v0.1.0

@@ -119,12 +119,13 @@ geolint check a.com --compare b.com
 
 | Command | What it does | Key flags |
 | --- | --- | --- |
-| `geolint check <url>` | Audit a single URL | `--format`, `--fail-under`, `--only`/`--ignore`/`--category`, `--compare`, `--baseline`, `--verbose` |
+| `geolint check <url>` | Audit a single URL | `--format`, `--fail-under`, `--only`/`--ignore`/`--category`, `--compare`, `--baseline`, `--badge`, `--verbose` |
 | `geolint crawl <url>` | Crawl same-origin pages and audit the whole site | `--max-pages`, `--max-depth`, `--concurrency`, `--fail-under` |
 | `geolint init <url>` | Crawl the site and generate a `llms.txt` | `-o`, `--max-pages` |
 | `geolint diff <old.json> <new.json>` | Compare two JSON reports: score delta, added/resolved findings | — |
 | `geolint rules` | List the 45 audit rules | `--category`, `--format table\|json\|markdown` |
 | `geolint bots` | List the 51 known AI crawlers and the impact of blocking each | `--format table\|json` |
+| `geolint mcp` | Run an MCP server on stdio for AI assistants | `--timeout` |
 
 Full flag reference: [docs/configuration.md](docs/configuration.md).
 
@@ -160,6 +161,16 @@ Exit code is `1` when the score drops below the gate (or findings regress
 against `--baseline`), `0` otherwise — works in GitLab CI, CircleCI, npm
 scripts, pre-deploy hooks.
 
+### Show your score as a README badge
+
+```bash
+npx @iliasabk/geolint check https://example.com --badge
+# → writes geolint-badge.svg + prints the markdown snippet to paste
+```
+
+Commit the SVG, or regenerate a [shields endpoint JSON](docs/badges.md) in CI
+(`--badge-endpoint`) for a badge that never goes stale.
+
 ## Output formats
 
 `-f pretty` (default) renders the terminal report above. The machine formats:
@@ -188,7 +199,30 @@ for (const f of report.findings) {
 
 `scan(url, options)` returns a typed `ScanReport`. Also exported: the bot
 registry (`AI_BOTS`, `botsByPurpose`), the rule registry (`allRules`,
-`ruleById`), robots.txt/llms.txt parsers, scorers and all four reporters.
+`ruleById`), robots.txt/llms.txt parsers, badge generators, scorers and all
+four reporters.
+
+## Use it from AI assistants (MCP)
+
+`geolint mcp` speaks the [Model Context Protocol](https://modelcontextprotocol.io)
+over stdio — Claude Desktop, Cursor, VS Code and Windsurf can audit sites,
+generate `llms.txt` and compare URLs as native tools:
+
+```jsonc
+// claude_desktop_config.json / ~/.cursor/mcp.json
+{
+  "mcpServers": {
+    "geolint": {
+      "command": "npx",
+      "args": ["-y", "@iliasabk/geolint", "mcp"]
+    }
+  }
+}
+```
+
+Five tools: `audit_url`, `generate_llms_txt`, `compare_urls`, `list_rules`,
+`list_ai_bots` — all read-only, with structured output and per-call timeouts.
+Setup for every client: [docs/mcp.md](docs/mcp.md).
 
 ## The bot registry is the point
 
@@ -242,10 +276,11 @@ at all — they only set a preference — and geolint treats them accordingly.
 | Hosted GEO audit web apps | partial | ❌ | ❌ | partial | ❌ | ❌ |
 
 Details and the reasoning behind each column: [docs/comparison.md](docs/comparison.md).
+geolint also ships an MCP server, a score badge and regression baselines.
 
 ## Roadmap
 
-Planned for v0.2+:
+Planned for v0.3+:
 
 - `geolint watch` — re-audit on deploys/file changes
 - More schema validators (Product, HowTo, Dataset…)
