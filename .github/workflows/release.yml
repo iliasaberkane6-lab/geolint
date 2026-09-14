@@ -26,7 +26,22 @@ jobs:
       - run: npm test
       - run: npm run build
 
+      # Idempotent: skip publish when this version is already on npm
+      # (e.g. it was pushed manually before the tag existed).
+      - name: Check if version is already published
+        id: published
+        run: |
+          PKG=$(node -p "require('./package.json').name")
+          VER=$(node -p "require('./package.json').version")
+          if npm view "${PKG}@${VER}" version --silent > /dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "${PKG}@${VER} already on npm — skipping publish."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish to npm
+        if: steps.published.outputs.exists != 'true'
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
