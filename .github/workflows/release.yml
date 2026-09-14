@@ -59,6 +59,40 @@ jobs:
         with:
           generate_release_notes: true
 
+  mcp-registry:
+    name: Publish to MCP registry
+    runs-on: ubuntu-latest
+    needs: publish
+    permissions:
+      id-token: write # GitHub OIDC auth for registry.modelcontextprotocol.io
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download mcp-publisher
+        run: |
+          curl -sL https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz | tar xz
+
+      # Idempotent: a version already present in the registry is a success.
+      - name: Publish to MCP registry
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          SERVER=$(node -p "require('./server.json').name")
+          API="https://registry.modelcontextprotocol.io/v0/servers/$(echo "$SERVER" | sed 's|/|%2F|g')/versions/$VER"
+          if curl -sf "$API" > /dev/null; then
+            echo "$SERVER@$VER already in MCP registry — skipping."
+            exit 0
+          fi
+          ./mcp-publisher login github-oidc
+          if ./mcp-publisher publish; then
+            exit 0
+          fi
+          curl -sf "$API" > /dev/null && exit 0
+          exit 1
+
       # Maintainer note: after cutting a release, float the major-version tag
       # so `uses: iliasabk/geolint@v1` keeps tracking the latest v1.x:
       #   git tag -f v1 v1.x.y && git push -f origin v1

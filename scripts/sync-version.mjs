@@ -12,3 +12,14 @@ if (next === src) {
 }
 writeFileSync(file, next);
 console.log(`VERSION -> ${version}`);
+
+// Keep the MCP registry manifest in lockstep: server.json version and the
+// npm package reference must match package.json or `mcp-publisher publish`
+// rejects the release.
+const server = JSON.parse(readFileSync('server.json', 'utf8'));
+server.version = version;
+for (const pkg of server.packages ?? []) {
+  if (pkg.registryType === 'npm') pkg.version = version;
+}
+writeFileSync('server.json', `${JSON.stringify(server, null, 2)}\n`);
+console.log(`server.json -> ${version}`);
