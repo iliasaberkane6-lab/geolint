@@ -1,11 +1,8 @@
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
-  - name: Rule documentation
-    url: https://github.com/iliasabk/geolint/blob/main/docs/rules.md
-    about: All audit rules, their severities and how to fix findings.
-  - name: GitHub Action docs
-    url: https://github.com/iliasabk/geolint/blob/main/docs/github-action.md
-    about: Using geolint in CI — SARIF upload, PR comments, baselines.
-  - name: Security policy
-    url: https://github.com/iliasabk/geolint/security/policy
-    about: Report a vulnerability privately — please don't open a public issue.
+  - name: Questions & ideas
+    url: https://github.com/iliasabk/geolint/discussions
+    about: Ask questions, share ideas or show what you built — Discussions, not Issues.
+  - name: Live showcase
+    url: https://iliasabk.github.io/geolint/
+    about: See real geolint reports for well-known sites before filing.
