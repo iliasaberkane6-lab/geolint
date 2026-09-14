@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint:ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+      - name: Smoke test CLI
+        run: |
+          node dist/cli.js --version
+          node dist/cli.js check https://example.com -f json -o /tmp/r.json
+          node -e "const r=require('/tmp/r.json'); if(typeof r.score!=='number') process.exit(1); console.log('score:',r.score,'grade:',r.grade)"

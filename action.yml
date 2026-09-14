@@ -92,6 +92,7 @@ runs:
         GEOLINT_TIMEOUT: ${{ inputs.timeout }}
       run: |
         JSON_FILE="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/geolint-report.json"
+        rm -f "${JSON_FILE}" # no stale report on reused runner temp dirs
         PKG="geolint@${GEOLINT_VERSION}"
 
         if [ "${GEOLINT_CRAWL}" = "true" ]; then

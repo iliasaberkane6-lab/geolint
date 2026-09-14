@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Rule documentation
+    url: https://github.com/iliasaberkane/geolint/blob/main/docs/rules.md
+    about: All audit rules, their severities and how to fix findings.
+  - name: GitHub Action docs
+    url: https://github.com/iliasaberkane/geolint/blob/main/docs/github-action.md
+    about: Using geolint in CI — SARIF upload, PR comments, baselines.
+  - name: Security policy
+    url: https://github.com/iliasaberkane/geolint/security/policy
+    about: Report a vulnerability privately — please don't open a public issue.

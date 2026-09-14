@@ -1,0 +1,56 @@
+name: Feature request
+description: Suggest a new rule, reporter, command or improvement.
+title: '[Feature]: '
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas are welcome! For a new audit rule, please also check
+        [docs/rules.md](https://github.com/iliasaberkane/geolint/blob/main/docs/rules.md)
+        to see if it already exists.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of geolint is this about?
+      options:
+        - New audit rule
+        - Existing rule behavior
+        - CLI command or flag
+        - Reporter / output format (pretty, json, sarif, markdown)
+        - GitHub Action
+        - Documentation
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this solve? What can't you do today?
+      placeholder: e.g. I want geolint to flag pages whose meta description exceeds ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should geolint do? For rules, describe the check, severity and the suggested fix text.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways you solved or worked around this.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links, examples, screenshots — anything that helps.

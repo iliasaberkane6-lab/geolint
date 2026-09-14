@@ -1,0 +1,70 @@
+name: Bug report
+description: Report incorrect findings, crashes or unexpected output from geolint.
+title: '[Bug]: '
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug!
+        Run `geolint --version` first — many issues are fixed in newer releases.
+
+  - type: input
+    id: version
+    attributes:
+      label: geolint version
+      description: Output of `geolint --version`, or the npm version you installed.
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: command
+    attributes:
+      label: Command and URL
+      description: The exact command you ran, including all flags.
+      placeholder: e.g. geolint check https://example.com -f json --fail-under 60
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect geolint to report or do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead? Include the exit code if relevant (0 = pass, 1 = below gate, 2 = runtime error).
+    validations:
+      required: true
+
+  - type: textarea
+    id: json-output
+    attributes:
+      label: JSON report
+      description: |
+        If possible, attach the output of the same command with `-f json`
+        (redact anything sensitive — it contains fetched HTML evidence).
+      render: json
+
+  - type: textarea
+    id: verbose-log
+    attributes:
+      label: Verbose log
+      description: Output with `--verbose` appended, if it adds anything.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I can reproduce this on the latest released version (`npx geolint@latest`).
+          required: true
+        - label: I searched existing issues for duplicates.
+          required: true
