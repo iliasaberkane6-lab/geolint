@@ -1,0 +1,26 @@
+# geolint
+
+> ESLint for AI search. Audits websites for AI-search readiness — AI crawler
+> access across 51 bot tokens, llms.txt, structured data and citability —
+> with 51 rules, a 0–100 score, SARIF output, an MCP server and a GitHub
+> Action. Run `npx @iliasabk/geolint check yoursite.com`.
+
+## Docs
+
+- [README](https://github.com/iliasabk/geolint#readme): quickstart, features and CLI overview
+- [CLI reference](https://github.com/iliasabk/geolint/blob/main/docs/configuration.md): every command, flag and exit code
+- [Rule catalogue](https://github.com/iliasabk/geolint/blob/main/docs/rules.md): all 51 rules with severity and fixes
+- [MCP server](https://github.com/iliasabk/geolint/blob/main/docs/mcp.md): audit sites from Claude Desktop, Cursor, VS Code, Windsurf
+- [GitHub Action](https://github.com/iliasabk/geolint/blob/main/docs/github-action.md): SARIF upload, PR comments, score gates
+- [Architecture](https://github.com/iliasabk/geolint/blob/main/docs/architecture.md): scan pipeline and engine internals
+- [Writing rules](https://github.com/iliasabk/geolint/blob/main/docs/writing-rules.md): rule-authoring guide for contributors
+
+## Live
+
+- [Showcase](https://iliasabk.github.io/geolint/): real geolint reports for ten well-known sites
+- [Metrics](https://github.com/iliasabk/geolint/tree/main/metrics): nightly dogfood scans committed by CI
+
+## Optional
+
+- [Contributing](https://github.com/iliasabk/geolint/blob/main/CONTRIBUTING.md): setup, tests, commit conventions
+- [Changelog](https://github.com/iliasabk/geolint/blob/main/CHANGELOG.md): release history
