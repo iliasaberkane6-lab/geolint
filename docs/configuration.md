@@ -13,6 +13,7 @@ Commands:
   diff <old.json> <new.json>  Compare two geolint JSON reports
   rules [options]             List the audit rules in the registry
   bots [options]              List known AI crawlers and the impact of blocking each one
+  mcp [options]               Start an MCP (Model Context Protocol) server on stdio for AI assistants
   help [command]              display help for command
 ```
 
@@ -56,6 +57,8 @@ Audit a single URL. This is the command you'll use 95% of the time.
 | `--compare <url2>` | Also scan this URL and render a side-by-side comparison |
 | `--save-baseline <file>` | Write a findings baseline JSON to this file |
 | `--baseline <file>` | Exit `1` on findings that are new since this baseline |
+| `--badge [file]` | Write an SVG score badge (default: `geolint-badge.svg`) and print a README snippet |
+| `--badge-endpoint <file>` | Write a shields.io endpoint JSON for a live badge |
 | `--verbose` | Include `info`-severity findings in the output (they're counted in the summary either way) |
 | `--no-color` | Disable colored output |
 
@@ -212,6 +215,24 @@ training data".
 `bots` and `rules` read the bundled registry only — they make **no network
 requests** and have no `--no-color` flag (colors auto-disable on non-TTY and
 `NO_COLOR`).
+
+## `geolint mcp`
+
+Start an MCP server on stdio so AI assistants (Claude Desktop, Cursor, VS
+Code, Windsurf) can run audits as native tools. Exposes five read-only tools:
+`audit_url`, `generate_llms_txt`, `compare_urls`, `list_rules` and
+`list_ai_bots`. All JSON-RPC traffic stays on stdout; status messages go to
+stderr.
+
+| Option | Description |
+| --- | --- |
+| `--timeout <ms>` | Per-tool-call timeout in milliseconds |
+
+```bash
+npx -y @iliasabk/geolint mcp
+```
+
+Client configuration snippets and tool schemas: [mcp.md](mcp.md).
 
 ## Exit codes
 
