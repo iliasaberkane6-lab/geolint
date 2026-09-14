@@ -4,14 +4,14 @@
     "version": "0.2.2"
   },
   "url": "https://stripe.com/",
-  "finalUrl": "https://stripe.com/en-de",
-  "scannedAt": "2026-09-14T11:46:58.561Z",
-  "durationMs": 7980,
+  "finalUrl": "https://stripe.com/",
+  "scannedAt": "2026-09-14T12:04:26.332Z",
+  "durationMs": 890,
   "page": {
     "status": 200,
     "contentType": "text/html; charset=utf-8",
-    "timingMs": 1079,
-    "redirected": true
+    "timingMs": 120,
+    "redirected": false
   },
   "robots": {
     "url": "https://stripe.com/robots.txt",
@@ -71,7 +71,7 @@
     },
     {
       "severity": "info",
-      "message": "27 of 31 images have no alt text",
+      "message": "31 of 35 images have no alt text",
       "detail": "Alt text is the primary way AI systems understand what an image shows; missing alt makes visual content uncitable.",
       "fix": "Write descriptive alt text for meaningful images (purely decorative ones can keep alt=\"\").",
       "ruleId": "content/images-no-alt"
@@ -82,25 +82,9 @@
       "detail": "Whatever sits under the H1 — image, list, navigation — is what engines read first; a declarative lead paragraph is the easiest span to cite.",
       "fix": "Open the article with a 2–4 sentence paragraph that directly answers the question the H1 poses.",
       "ruleId": "content/answer-first"
-    },
-    {
-      "severity": "info",
-      "message": "Response could be faster — 1079ms",
-      "detail": "Sub-second responses let crawlers cover more of your site per visit.",
-      "fix": "Consider caching/CDN improvements to get under ~800ms.",
-      "evidence": "1079ms",
-      "ruleId": "technical/slow-response"
-    },
-    {
-      "severity": "info",
-      "message": "The URL redirected to a different final URL",
-      "detail": "Requested https://stripe.com/, ended at https://stripe.com/en-de.",
-      "fix": "Make sure redirects are intentional, single-hop and point at the canonical destination.",
-      "evidence": "https://stripe.com/ → https://stripe.com/en-de",
-      "ruleId": "technical/redirect"
     }
   ],
-  "score": 95,
+  "score": 96,
   "grade": "A",
   "categories": {
     "ai-crawler": {
@@ -216,10 +200,10 @@
       ]
     },
     "technical": {
-      "score": 96,
+      "score": 100,
       "errors": 0,
       "warnings": 0,
-      "infos": 2,
+      "infos": 0,
       "rulesRun": [
         "technical/page-unreachable",
         "technical/http-error",
@@ -241,6 +225,8 @@
         "technical/canonical",
         "technical/title-missing",
         "technical/meta-description",
+        "technical/slow-response",
+        "technical/redirect",
         "technical/https",
         "technical/sitemap-quality"
       ]

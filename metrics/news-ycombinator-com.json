@@ -5,12 +5,12 @@
   },
   "url": "https://news.ycombinator.com/",
   "finalUrl": "https://news.ycombinator.com/",
-  "scannedAt": "2026-09-14T11:47:11.100Z",
-  "durationMs": 13554,
+  "scannedAt": "2026-09-14T12:04:30.425Z",
+  "durationMs": 777,
   "page": {
     "status": 200,
     "contentType": "text/html; charset=utf-8",
-    "timingMs": 999,
+    "timingMs": 242,
     "redirected": false
   },
   "robots": {
@@ -134,14 +134,6 @@
       "detail": "A 1–2 sentence description gives answer engines a clean, pre-written summary of the page.",
       "fix": "Write a meta[name=description] of ~50–160 characters summarizing the page.",
       "ruleId": "technical/meta-description"
-    },
-    {
-      "severity": "info",
-      "message": "Response could be faster — 999ms",
-      "detail": "Sub-second responses let crawlers cover more of your site per visit.",
-      "fix": "Consider caching/CDN improvements to get under ~800ms.",
-      "evidence": "999ms",
-      "ruleId": "technical/slow-response"
     }
   ],
   "score": 90,
@@ -256,10 +248,10 @@
       ]
     },
     "technical": {
-      "score": 88,
+      "score": 90,
       "errors": 0,
       "warnings": 1,
-      "infos": 3,
+      "infos": 2,
       "rulesRun": [
         "technical/page-unreachable",
         "technical/http-error",
@@ -278,6 +270,7 @@
         "technical/http-error",
         "technical/client-rendered",
         "technical/title-missing",
+        "technical/slow-response",
         "technical/redirect",
         "technical/https",
         "technical/sitemap-quality"
