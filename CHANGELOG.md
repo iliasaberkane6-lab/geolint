@@ -49,13 +49,13 @@ First public release of geolint — lint your website for AI-search readiness.
 - **Score gate**: `--fail-under <0-100>` plus exit codes `0`/`1`/`2` for CI.
 - **Baseline diffing**: `--save-baseline` / `--baseline` to catch regressions
   against a committed baseline.
-- **GitHub Action**: composite `action.yml` (`iliasaberkane6-lab/geolint@v1`)
+- **GitHub Action**: composite `action.yml` (`iliasabk/geolint@v1`)
   producing score/grade outputs, a SARIF report and a job summary — see
   [docs/github-action.md](docs/github-action.md).
 - Fetch layer with per-request timeout (`--timeout`), redirect handling and a
   bounded same-origin fetch budget for sitemap/llms-full.txt discovery.
 
-[unreleased]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.2.1...HEAD
-[0.2.1]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.2.0...v0.2.1
-[0.2.0]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/iliasaberkane6-lab/geolint/releases/tag/v0.1.0
+[unreleased]: https://github.com/iliasabk/geolint/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/iliasabk/geolint/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/iliasabk/geolint/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/iliasabk/geolint/releases/tag/v0.1.0

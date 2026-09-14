@@ -23,10 +23,10 @@
   "author": "Ilias Aberkane",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iliasaberkane6-lab/geolint.git"
+    "url": "git+https://github.com/iliasabk/geolint.git"
   },
-  "homepage": "https://github.com/iliasaberkane6-lab/geolint#readme",
-  "bugs": "https://github.com/iliasaberkane6-lab/geolint/issues",
+  "homepage": "https://github.com/iliasabk/geolint#readme",
+  "bugs": "https://github.com/iliasabk/geolint/issues",
   "type": "module",
   "bin": {
     "geolint": "dist/cli.js"

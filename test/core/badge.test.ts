@@ -70,7 +70,7 @@ describe('badgeMarkdown', () => {
     const md = badgeMarkdown(87, 'B');
     expect(md).toBe(
       '[![geolint](https://img.shields.io/badge/geolint-87%2F100_%C2%B7_B-green)]' +
-        '(https://github.com/iliasaberkane6-lab/geolint)',
+        '(https://github.com/iliasabk/geolint)',
     );
   });
 

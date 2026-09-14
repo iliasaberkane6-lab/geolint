@@ -69,7 +69,7 @@ describe('sarif — ScanReport', () => {
     expect(https.shortDescription.text).toBe('Site served over HTTPS');
     expect(https.defaultConfiguration.level).toBe('error');
     expect(https.helpUri).toBe(
-      'https://github.com/iliasaberkane6-lab/geolint/blob/main/docs/rules.md#rule-technical-https',
+      'https://github.com/iliasabk/geolint/blob/main/docs/rules.md#rule-technical-https',
     );
     expect(https.name).toBe('TechnicalHttps');
   });

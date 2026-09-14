@@ -33,7 +33,7 @@ Localhost-style hosts default to **http**, not https: `localhost`, `127.*`,
 staging and the bundled demo site. Non-http(s) schemes are rejected.
 
 geolint fetches with its own UA
-(`Mozilla/5.0 (compatible; geolint/<version>; +https://github.com/iliasaberkane6-lab/geolint)`),
+(`Mozilla/5.0 (compatible; geolint/<version>; +https://github.com/iliasabk/geolint)`),
 follows redirects, and reports the final URL. Each scan may perform a bounded
 number of auxiliary fetches (robots.txt, llms.txt, sitemap, llms-full.txt and
 sampled llms.txt links — the latter may be cross-origin) — capped at 10 per

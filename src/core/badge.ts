@@ -24,7 +24,7 @@ const GRADE_HEX_COLOR: Record<Grade, string> = {
 /** Dark grey used for the label segment, same as shields' default. */
 const LABEL_BG = '#555';
 const DEFAULT_LABEL = 'geolint';
-const REPO_URL = 'https://github.com/iliasaberkane6-lab/geolint';
+const REPO_URL = 'https://github.com/iliasabk/geolint';
 
 /** Escape the five XML special chars for use in text nodes and attributes. */
 function escapeXml(s: string): string {

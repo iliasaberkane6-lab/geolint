@@ -24,7 +24,7 @@ This writes `geolint-badge.svg` to the current directory and prints a
 markdown snippet to stderr (stdout stays reserved for the report):
 
 ```markdown
-[![geolint](geolint-badge.svg)](https://github.com/iliasaberkane6-lab/geolint)
+[![geolint](geolint-badge.svg)](https://github.com/iliasabk/geolint)
 ```
 
 ## Flags
@@ -86,7 +86,7 @@ Then point shields at the raw URL of the committed file (a gist or any
 public URL works too):
 
 ```markdown
-[![geolint](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/<owner>/<repo>/main/geolint-badge.json)](https://github.com/iliasaberkane6-lab/geolint)
+[![geolint](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/<owner>/<repo>/main/geolint-badge.json)](https://github.com/iliasabk/geolint)
 ```
 
 ## Pattern C — static shields URL (instant, but goes stale)
@@ -95,7 +95,7 @@ The markdown snippet falls back to a static shields URL when no
 README-usable SVG path was written:
 
 ```markdown
-[![geolint](https://img.shields.io/badge/geolint-87%2F100_%C2%B7_B-green)](https://github.com/iliasaberkane6-lab/geolint)
+[![geolint](https://img.shields.io/badge/geolint-87%2F100_%C2%B7_B-green)](https://github.com/iliasabk/geolint)
 ```
 
 This needs zero files and zero CI — but the score is baked into the URL, so

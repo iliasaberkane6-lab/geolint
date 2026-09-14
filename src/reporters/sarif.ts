@@ -1,7 +1,7 @@
 import type { Finding, ScanReport, Severity, SiteReport } from '../core/types.js';
 import { allRules } from '../rules/index.js';
 
-const INFORMATION_URI = 'https://github.com/iliasaberkane6-lab/geolint';
+const INFORMATION_URI = 'https://github.com/iliasabk/geolint';
 const SCHEMA = 'https://json.schemastore.org/sarif-2.1.0.json';
 
 type SarifLevel = 'error' | 'warning' | 'note';

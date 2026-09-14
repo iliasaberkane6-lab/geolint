@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@iliasabk/geolint"><img src="https://img.shields.io/npm/v/@iliasabk/geolint" alt="npm version"></a>
-  <a href="https://github.com/iliasaberkane6-lab/geolint/actions/workflows/ci.yml"><img src="https://github.com/iliasaberkane6-lab/geolint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/iliasabk/geolint/actions/workflows/ci.yml"><img src="https://github.com/iliasabk/geolint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/node-%3E%3D22-brightgreen" alt="node >= 22">
   <a href="https://www.npmjs.com/package/@iliasabk/geolint"><img src="https://img.shields.io/npm/dm/@iliasabk/geolint" alt="npm downloads"></a>
@@ -134,7 +134,7 @@ Full flag reference: [docs/configuration.md](docs/configuration.md).
 ### GitHub Action
 
 ```yaml
-- uses: iliasaberkane6-lab/geolint@v1
+- uses: iliasabk/geolint@v1
   id: geolint
   with:
     url: https://example.com
