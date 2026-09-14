@@ -20,6 +20,10 @@
 </p>
 
 <p align="center">
+  <a href="docs/i18n/README.de.md">🇩🇪 Deutsch</a>
+</p>
+
+<p align="center">
   <img src="media/demo.gif" alt="geolint terminal demo" width="720">
 </p>
 
