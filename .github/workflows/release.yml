@@ -26,23 +26,31 @@ jobs:
       - run: npm test
       - run: npm run build
 
-      # Idempotent: skip publish when this version is already on npm
-      # (e.g. it was pushed manually before the tag existed).
-      - name: Check if version is already published
-        id: published
+      # Idempotent: if the version is already on npm (e.g. published manually
+      # before the tag existed, or registry propagation raced an earlier push),
+      # publishing is skipped — and a failed publish is tolerated only when the
+      # version is verifiably live.
+      - name: Publish to npm
         run: |
           PKG=$(node -p "require('./package.json').name")
           VER=$(node -p "require('./package.json').version")
           if npm view "${PKG}@${VER}" version --silent > /dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
             echo "${PKG}@${VER} already on npm — skipping publish."
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-
-      - name: Publish to npm
-        if: steps.published.outputs.exists != 'true'
-        run: npm publish --provenance --access public
+          if npm publish --provenance --access public; then
+            exit 0
+          fi
+          # Registry propagation can lag a manual publish by minutes — a 409 on
+          # a version that then becomes visible is not a real failure.
+          for i in 1 2 3 4 5 6; do
+            sleep 20
+            if npm view "${PKG}@${VER}" version --silent > /dev/null 2>&1; then
+              echo "${PKG}@${VER} visible after publish conflict — treating as published."
+              exit 0
+            fi
+          done
+          exit 1
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
