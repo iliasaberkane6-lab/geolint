@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { VERSION } from '../../src/core/types.js';
 import { renderReport, renderSiteReport } from '../../src/reporters/index.js';
 import { stripAnsi } from '../../src/reporters/table.js';
 import { makeReport, makeSiteReport } from './fixtures.js';
@@ -12,7 +13,7 @@ describe('pretty — ScanReport', () => {
 
   it('renders the header with tool name, version and url', () => {
     expect(out).toContain('geolint');
-    expect(out).toContain('v0.1.0');
+    expect(out).toContain(`v${VERSION}`);
     expect(out).toContain('https://example.com/');
   });
 

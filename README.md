@@ -68,7 +68,7 @@ deliberately blocks two bots) — trimmed for width:
 ```text
 $ geolint check localhost:4173 --ignore technical/https
 
-  geolint v0.1.0 — AI-search readiness
+  geolint v0.2.1 — AI-search readiness
   http://localhost:4173/
   200 OK · text/html · TTFB 113ms · robots 200 · llms.txt 404
 
