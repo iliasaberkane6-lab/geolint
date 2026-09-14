@@ -9,8 +9,8 @@ branding:
   color: green
 
 # This is a composite action: it can only contain `run` steps (no `uses:`).
-# Callers that want SARIF upload or PR comments add those steps in their own
-# workflow — see docs/github-action.md for ready-to-copy recipes.
+# Sticky PR comments are built in (input `comment`); SARIF upload still lives
+# in the caller's workflow — see docs/github-action.md for recipes.
 inputs:
   url:
     description: 'URL to audit (e.g. https://example.com).'
@@ -55,6 +55,12 @@ inputs:
     description: 'Per-request fetch timeout in milliseconds (check command).'
     required: false
     default: '15000'
+  comment:
+    description: >-
+      On pull_request events, create or update a sticky geolint report comment
+      on the PR (requires pull-requests: write on the workflow token).
+    required: false
+    default: 'false'
 
 outputs:
   score:
@@ -162,6 +168,19 @@ runs:
           echo "**geolint** could not audit ${GEOLINT_URL} — see the step log for details." \
             >> "${GITHUB_STEP_SUMMARY}"
         fi
+
+    # Sticky PR comment. `node` is guaranteed on PATH (the runner itself is
+    # Node), so no setup step is needed. The script never fails the build:
+    # comment errors become ::warning:: annotations (see scripts/pr-comment.mjs).
+    - name: Comment on PR
+      if: always() && inputs.comment == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GEOLINT_COMMENT: ${{ inputs.comment }}
+        GEOLINT_MD_FILE: ${{ inputs.markdown-file }}
+        GEOLINT_URL: ${{ inputs.url }}
+      run: node "${{ github.action_path }}/scripts/pr-comment.mjs"
 
     - name: Enforce score gate
       if: always()

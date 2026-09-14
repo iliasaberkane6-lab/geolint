@@ -75,8 +75,9 @@ Type contracts (`ScanReport`, `Rule`, `Finding`, `Grade`…) live in
 5. **Test it.** Add a spec under `test/rules/` (see `test/helpers.ts` for
    building a fake `RuleContext`). Cover: passes → `[]`, fails → finding with
    `fix`, `page === null` → no crash.
-6. **Document it.** Add the rule to `docs/rules.md` — that file is the public
-   rule catalogue.
+6. **Document it.** Regenerate the public rule catalogue with
+   `npx tsx scripts/gen-rules-docs.ts` — `docs/rules.md` is generated, never
+   edit it by hand. The full guide: `docs/writing-rules.md`.
 
 Rule severity cheat-sheet: `error` hurts the score the most (something is
 broken or blocked), `warn` is a real but softer problem, `info` is advisory.

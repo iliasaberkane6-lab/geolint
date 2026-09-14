@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { aiManifestRule } from '../../src/rules/llms-txt/ai-manifest.js';
 import { brokenLinksRule } from '../../src/rules/llms-txt/broken-links.js';
 import { invalidStructureRule } from '../../src/rules/llms-txt/invalid-structure.js';
 import { llmsFullMissingRule } from '../../src/rules/llms-txt/llms-full-missing.js';
@@ -160,5 +161,56 @@ describe('llms-txt/llms-full-missing', () => {
       },
     });
     expect(await llmsFullMissingRule.check(ctx)).toEqual([]);
+  });
+});
+
+describe('llms-txt/ai-manifest', () => {
+  it('informs listing the manifest files it found', async () => {
+    const ctx = makeCtx({
+      fetchPage: async (u: string) =>
+        u.endsWith('/agents.json')
+          ? makePage({ url: u, finalUrl: u, html: '{"version":"1.0"}' })
+          : makePage({ url: u, finalUrl: u, status: 404 }),
+    });
+    const findings = await aiManifestRule.check(ctx);
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('info');
+    expect(findings[0]!.message).toContain('/agents.json');
+  });
+
+  it('informs when none of the conventions exist', async () => {
+    const ctx = makeCtx({
+      fetchPage: async (u: string) => makePage({ url: u, finalUrl: u, status: 404 }),
+    });
+    const findings = await aiManifestRule.check(ctx);
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toMatch(/no emerging ai manifest/i);
+  });
+
+  it('does not count HTML fallback pages or invalid JSON as manifests', async () => {
+    // SPA rewrites commonly answer every path with index.html and a 200.
+    const htmlFallback = makeCtx({
+      fetchPage: async (u: string) =>
+        makePage({ url: u, finalUrl: u, html: '<!doctype html><html><body>app</body></html>' }),
+    });
+    const findings = await aiManifestRule.check(htmlFallback);
+    expect(findings[0]!.message).toMatch(/no emerging ai manifest/i);
+
+    const badJson = makeCtx({
+      fetchPage: async (u: string) =>
+        u.endsWith('.json')
+          ? makePage({ url: u, finalUrl: u, html: '{broken' })
+          : makePage({ url: u, finalUrl: u, status: 404 }),
+    });
+    expect((await aiManifestRule.check(badJson))[0]!.message).toMatch(/no emerging/i);
+  });
+
+  it('returns [] when a fetch throws — absence was not verified', async () => {
+    const ctx = makeCtx({
+      fetchPage: async () => {
+        throw new Error('budget exhausted');
+      },
+    });
+    expect(await aiManifestRule.check(ctx)).toEqual([]);
   });
 });

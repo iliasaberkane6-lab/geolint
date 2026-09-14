@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { answerFirstRule } from '../../src/rules/content/answer-first.js';
 import { imagesNoAltRule } from '../../src/rules/content/images-no-alt.js';
 import { langMissingRule } from '../../src/rules/content/lang-missing.js';
 import { missingDatesRule } from '../../src/rules/content/missing-dates.js';
@@ -7,6 +8,8 @@ import { noDataPointsRule } from '../../src/rules/content/no-data-points.js';
 import { noH1Rule } from '../../src/rules/content/no-h1.js';
 import { noQuestionHeadingsRule } from '../../src/rules/content/no-question-headings.js';
 import { noStructureRule } from '../../src/rules/content/no-structure.js';
+import { selfContainedParagraphsRule } from '../../src/rules/content/self-contained-paragraphs.js';
+import { staleDatesRule } from '../../src/rules/content/stale-dates.js';
 import { thinContentRule } from '../../src/rules/content/thin-content.js';
 import { makeCtx, makePage } from '../helpers.js';
 
@@ -182,5 +185,95 @@ describe('content/lang-missing', () => {
 
   it('passes when lang is set', async () => {
     expect(await langMissingRule.check(makeCtx())).toEqual([]);
+  });
+});
+
+describe('content/answer-first', () => {
+  const LEAD =
+    'Geolint is a CLI tool that audits websites for AI-search readiness across forty five rules and five distinct audit categories.';
+
+  it('informs when the next section heading comes before any paragraph', async () => {
+    const findings = await answerFirstRule.check(
+      pageOf('<h1>Title</h1><h2>Section</h2><p>body text</p>'),
+    );
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('info');
+    expect(findings[0]!.message).toMatch(/no paragraph/i);
+  });
+
+  it('informs when the lead paragraph is too short', async () => {
+    const findings = await answerFirstRule.check(pageOf('<h1>T</h1><p>Welcome!</p>'));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toMatch(/thin/i);
+  });
+
+  it('skips chrome paragraphs when looking for the lead', async () => {
+    const body = `<h1>T</h1><nav><p>Menu item one</p></nav><p>${LEAD}</p>`;
+    expect(await answerFirstRule.check(pageOf(body))).toEqual([]);
+  });
+
+  it('passes when a substantial paragraph follows the H1', async () => {
+    expect(await answerFirstRule.check(pageOf(`<h1>T</h1><p>${LEAD}</p>`))).toEqual([]);
+  });
+
+  it('stays silent when there is no H1 — content/no-h1 owns that', async () => {
+    expect(await answerFirstRule.check(pageOf('<p>text</p>'))).toEqual([]);
+  });
+});
+
+describe('content/self-contained-paragraphs', () => {
+  const para = (open: string) => `<p>${open} ${words(20)}</p>`;
+
+  it('informs when most sampled paragraphs open context-dependently', async () => {
+    const body =
+      para('As mentioned above, the numbers show') +
+      para('This approach works because') +
+      para('It also helps when') +
+      para('The caching layer provides');
+    const findings = await selfContainedParagraphsRule.check(pageOf(body));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('info');
+    expect(findings[0]!.message).toContain('3 of 4');
+  });
+
+  it('passes when paragraphs restate their subjects', async () => {
+    const body =
+      para('The caching layer stores') +
+      para('Redis keeps the session data') +
+      para('Geolint audits the page') +
+      para('Answer engines prefer');
+    expect(await selfContainedParagraphsRule.check(pageOf(body))).toEqual([]);
+  });
+
+  it('ignores pages with too few substantial paragraphs', async () => {
+    const body = para('This approach works because') + para('It also helps when');
+    expect(await selfContainedParagraphsRule.check(pageOf(body))).toEqual([]);
+  });
+});
+
+describe('content/stale-dates', () => {
+  it('informs when the newest machine-readable date is over 2 years old', async () => {
+    const findings = await staleDatesRule.check(
+      pageOf('<p>x</p><time datetime="2020-01-01">Jan 2020</time>'),
+    );
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('info');
+    expect(findings[0]!.evidence).toContain('2020-01-01');
+  });
+
+  it('reads JSON-LD dateModified', async () => {
+    const ld = `<script type="application/ld+json">${JSON.stringify({
+      '@type': 'Article',
+      dateModified: '2019-03-01',
+    })}</script>`;
+    const findings = await staleDatesRule.check(pageOf('<p>x</p>', ld));
+    expect(findings).toHaveLength(1);
+  });
+
+  it('passes on a recent date and on no dates at all', async () => {
+    const fresh = new Date().toISOString().slice(0, 10);
+    expect(await staleDatesRule.check(pageOf(`<time datetime="${fresh}">now</time>`))).toEqual([]);
+    // No dates is content/missing-dates' case.
+    expect(await staleDatesRule.check(pageOf('<p>undated</p>'))).toEqual([]);
   });
 });

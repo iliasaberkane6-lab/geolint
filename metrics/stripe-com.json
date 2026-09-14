@@ -1,0 +1,608 @@
+{
+  "tool": {
+    "name": "geolint",
+    "version": "0.2.2"
+  },
+  "url": "https://stripe.com/",
+  "finalUrl": "https://stripe.com/en-de",
+  "scannedAt": "2026-09-14T11:46:58.561Z",
+  "durationMs": 7980,
+  "page": {
+    "status": 200,
+    "contentType": "text/html; charset=utf-8",
+    "timingMs": 1079,
+    "redirected": true
+  },
+  "robots": {
+    "url": "https://stripe.com/robots.txt",
+    "status": 200,
+    "groupCount": 3,
+    "sitemaps": ["https://stripe.com/sitemap/sitemap.xml"]
+  },
+  "llmsTxt": {
+    "url": "https://stripe.com/llms.txt",
+    "status": 200,
+    "title": "Stripe",
+    "linkCount": 288
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "message": "No llms-full.txt found",
+      "detail": "GET https://stripe.com/llms-full.txt returned HTTP 404. The optional full-content companion is absent.",
+      "fix": "Consider publishing /llms-full.txt with your key documentation inlined as markdown.",
+      "evidence": "https://stripe.com/llms-full.txt → HTTP 404",
+      "ruleId": "llms-txt/llms-full-missing"
+    },
+    {
+      "severity": "info",
+      "message": "No emerging AI manifest files found",
+      "detail": "Checked /agents.json, /ai.txt, /.well-known/ai-plugin.json — all absent. These conventions are early and entirely optional.",
+      "fix": "Prioritize /llms.txt; add agents.json or ai.txt only if they fit your AI distribution strategy.",
+      "ruleId": "llms-txt/ai-manifest"
+    },
+    {
+      "severity": "info",
+      "message": "No BreadcrumbList schema found",
+      "detail": "Breadcrumbs expose site structure to machines; without them a page floats without context.",
+      "fix": "Add BreadcrumbList JSON-LD matching the visible breadcrumb trail.",
+      "ruleId": "schema/no-breadcrumb"
+    },
+    {
+      "severity": "info",
+      "message": "2 <h1> elements on the page",
+      "detail": "A single H1 anchors the page topic; several competing H1s dilute the signal machines use to understand it.",
+      "fix": "Keep one descriptive <h1>; demote the others to <h2> or below.",
+      "ruleId": "content/no-h1"
+    },
+    {
+      "severity": "info",
+      "message": "No question-shaped headings (h2/h3 ending in \"?\")",
+      "detail": "Question headings map directly onto user prompts and make sections self-contained citable answers.",
+      "fix": "Rewrite a few section headings as the actual questions your audience asks.",
+      "ruleId": "content/no-question-headings"
+    },
+    {
+      "severity": "warn",
+      "message": "No machine-readable publication or modified date found",
+      "detail": "Checked <time datetime>, article:* meta tags and JSON-LD datePublished/dateModified — none present.",
+      "fix": "Expose a date via <time datetime=\"…\">, article:published_time meta or JSON-LD datePublished/dateModified.",
+      "ruleId": "content/missing-dates"
+    },
+    {
+      "severity": "info",
+      "message": "27 of 31 images have no alt text",
+      "detail": "Alt text is the primary way AI systems understand what an image shows; missing alt makes visual content uncitable.",
+      "fix": "Write descriptive alt text for meaningful images (purely decorative ones can keep alt=\"\").",
+      "ruleId": "content/images-no-alt"
+    },
+    {
+      "severity": "info",
+      "message": "No paragraph directly follows the H1",
+      "detail": "Whatever sits under the H1 — image, list, navigation — is what engines read first; a declarative lead paragraph is the easiest span to cite.",
+      "fix": "Open the article with a 2–4 sentence paragraph that directly answers the question the H1 poses.",
+      "ruleId": "content/answer-first"
+    },
+    {
+      "severity": "info",
+      "message": "Response could be faster — 1079ms",
+      "detail": "Sub-second responses let crawlers cover more of your site per visit.",
+      "fix": "Consider caching/CDN improvements to get under ~800ms.",
+      "evidence": "1079ms",
+      "ruleId": "technical/slow-response"
+    },
+    {
+      "severity": "info",
+      "message": "The URL redirected to a different final URL",
+      "detail": "Requested https://stripe.com/, ended at https://stripe.com/en-de.",
+      "fix": "Make sure redirects are intentional, single-hop and point at the canonical destination.",
+      "evidence": "https://stripe.com/ → https://stripe.com/en-de",
+      "ruleId": "technical/redirect"
+    }
+  ],
+  "score": 95,
+  "grade": "A",
+  "categories": {
+    "ai-crawler": {
+      "score": 100,
+      "errors": 0,
+      "warnings": 0,
+      "infos": 0,
+      "rulesRun": [
+        "ai-crawler/search-bots-blocked",
+        "ai-crawler/training-bots-blocked",
+        "ai-crawler/wildcard-block-all",
+        "ai-crawler/robots-missing",
+        "ai-crawler/robots-unreachable",
+        "ai-crawler/meta-robots-blocking",
+        "ai-crawler/crawl-delay",
+        "ai-crawler/ai-opt-out-signals",
+        "ai-crawler/user-fetch-bypass",
+        "ai-crawler/stale-tokens"
+      ],
+      "passed": [
+        "ai-crawler/search-bots-blocked",
+        "ai-crawler/training-bots-blocked",
+        "ai-crawler/wildcard-block-all",
+        "ai-crawler/robots-missing",
+        "ai-crawler/robots-unreachable",
+        "ai-crawler/meta-robots-blocking",
+        "ai-crawler/crawl-delay",
+        "ai-crawler/ai-opt-out-signals",
+        "ai-crawler/user-fetch-bypass",
+        "ai-crawler/stale-tokens"
+      ]
+    },
+    "llms-txt": {
+      "score": 96,
+      "errors": 0,
+      "warnings": 0,
+      "infos": 2,
+      "rulesRun": [
+        "llms-txt/missing",
+        "llms-txt/invalid-structure",
+        "llms-txt/no-summary",
+        "llms-txt/no-sections",
+        "llms-txt/broken-links",
+        "llms-txt/llms-full-missing",
+        "llms-txt/relative-links",
+        "llms-txt/optional-not-last",
+        "llms-txt/robots-directives",
+        "llms-txt/multiple-h1",
+        "llms-txt/ai-manifest"
+      ],
+      "passed": [
+        "llms-txt/missing",
+        "llms-txt/invalid-structure",
+        "llms-txt/no-summary",
+        "llms-txt/no-sections",
+        "llms-txt/broken-links",
+        "llms-txt/relative-links",
+        "llms-txt/optional-not-last",
+        "llms-txt/robots-directives",
+        "llms-txt/multiple-h1"
+      ]
+    },
+    "schema": {
+      "score": 98,
+      "errors": 0,
+      "warnings": 0,
+      "infos": 1,
+      "rulesRun": [
+        "schema/no-jsonld",
+        "schema/invalid-jsonld",
+        "schema/missing-article-fields",
+        "schema/no-faq-schema",
+        "schema/no-organization",
+        "schema/no-breadcrumb",
+        "schema/required-fields"
+      ],
+      "passed": [
+        "schema/no-jsonld",
+        "schema/invalid-jsonld",
+        "schema/missing-article-fields",
+        "schema/no-faq-schema",
+        "schema/no-organization",
+        "schema/required-fields"
+      ]
+    },
+    "content": {
+      "score": 86,
+      "errors": 0,
+      "warnings": 1,
+      "infos": 4,
+      "rulesRun": [
+        "content/thin-content",
+        "content/no-h1",
+        "content/no-question-headings",
+        "content/missing-dates",
+        "content/no-author",
+        "content/no-data-points",
+        "content/images-no-alt",
+        "content/no-structure",
+        "content/lang-missing",
+        "content/answer-first",
+        "content/self-contained-paragraphs",
+        "content/stale-dates"
+      ],
+      "passed": [
+        "content/thin-content",
+        "content/no-author",
+        "content/no-data-points",
+        "content/no-structure",
+        "content/lang-missing",
+        "content/self-contained-paragraphs",
+        "content/stale-dates"
+      ]
+    },
+    "technical": {
+      "score": 96,
+      "errors": 0,
+      "warnings": 0,
+      "infos": 2,
+      "rulesRun": [
+        "technical/page-unreachable",
+        "technical/http-error",
+        "technical/client-rendered",
+        "technical/sitemap-missing",
+        "technical/canonical",
+        "technical/title-missing",
+        "technical/meta-description",
+        "technical/slow-response",
+        "technical/redirect",
+        "technical/https",
+        "technical/sitemap-quality"
+      ],
+      "passed": [
+        "technical/page-unreachable",
+        "technical/http-error",
+        "technical/client-rendered",
+        "technical/sitemap-missing",
+        "technical/canonical",
+        "technical/title-missing",
+        "technical/meta-description",
+        "technical/https",
+        "technical/sitemap-quality"
+      ]
+    }
+  },
+  "bots": [
+    {
+      "id": "GPTBot",
+      "name": "GPTBot",
+      "company": "OpenAI",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "OAI-SearchBot",
+      "name": "OAI-SearchBot",
+      "company": "OpenAI",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "ChatGPT-User",
+      "name": "ChatGPT-User",
+      "company": "OpenAI",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "OAI-AdsBot",
+      "name": "OAI-AdsBot",
+      "company": "OpenAI",
+      "purpose": "mixed",
+      "allowed": true
+    },
+    {
+      "id": "ClaudeBot",
+      "name": "ClaudeBot",
+      "company": "Anthropic",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Claude-User",
+      "name": "Claude-User",
+      "company": "Anthropic",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "Claude-SearchBot",
+      "name": "Claude-SearchBot",
+      "company": "Anthropic",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "anthropic-ai",
+      "name": "anthropic-ai",
+      "company": "Anthropic",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Claude-Web",
+      "name": "Claude-Web",
+      "company": "Anthropic",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "PerplexityBot",
+      "name": "PerplexityBot",
+      "company": "Perplexity",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "Perplexity-User",
+      "name": "Perplexity-User",
+      "company": "Perplexity",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "Googlebot",
+      "name": "Googlebot",
+      "company": "Google",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "Google-Extended",
+      "name": "Google-Extended",
+      "company": "Google",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Applebot",
+      "name": "Applebot",
+      "company": "Apple",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "Applebot-Extended",
+      "name": "Applebot-Extended",
+      "company": "Apple",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "meta-externalagent",
+      "name": "Meta-ExternalAgent",
+      "company": "Meta",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Meta-WebIndexer",
+      "name": "Meta-WebIndexer",
+      "company": "Meta",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "Meta-ExternalFetcher",
+      "name": "Meta-ExternalFetcher",
+      "company": "Meta",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "facebookexternalhit",
+      "name": "facebookexternalhit",
+      "company": "Meta",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "FacebookBot",
+      "name": "FacebookBot",
+      "company": "Meta",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Amazonbot",
+      "name": "Amazonbot",
+      "company": "Amazon",
+      "purpose": "mixed",
+      "allowed": true
+    },
+    {
+      "id": "Amzn-SearchBot",
+      "name": "Amzn-SearchBot",
+      "company": "Amazon",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "Amzn-User",
+      "name": "Amzn-User",
+      "company": "Amazon",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "MistralAI-User",
+      "name": "MistralAI-User",
+      "company": "Mistral AI",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "MistralAI-Index",
+      "name": "MistralAI-Index",
+      "company": "Mistral AI",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "MistralAI-Training",
+      "name": "MistralAI-Training",
+      "company": "Mistral AI",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Bingbot",
+      "name": "Bingbot",
+      "company": "Microsoft",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "DuckDuckBot",
+      "name": "DuckDuckBot",
+      "company": "DuckDuckGo",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "DuckAssistBot",
+      "name": "DuckAssistBot",
+      "company": "DuckDuckGo",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "YouBot",
+      "name": "YouBot",
+      "company": "You.com",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "KimiBot",
+      "name": "KimiBot",
+      "company": "Moonshot AI",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Kimi-User",
+      "name": "Kimi-User",
+      "company": "Moonshot AI",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "TongyiBot",
+      "name": "TongyiBot",
+      "company": "Alibaba",
+      "purpose": "mixed",
+      "allowed": true
+    },
+    {
+      "id": "ExaBot",
+      "name": "ExaBot",
+      "company": "Exa",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "TavilyBot",
+      "name": "TavilyBot",
+      "company": "Tavily",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "Timpibot",
+      "name": "Timpibot",
+      "company": "Timpi",
+      "purpose": "search",
+      "allowed": true
+    },
+    {
+      "id": "Bytespider",
+      "name": "Bytespider",
+      "company": "ByteDance",
+      "purpose": "mixed",
+      "allowed": true
+    },
+    {
+      "id": "CCBot",
+      "name": "CCBot",
+      "company": "Common Crawl",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "cohere-ai",
+      "name": "cohere-ai",
+      "company": "Cohere",
+      "purpose": "user-fetch",
+      "allowed": true
+    },
+    {
+      "id": "cohere-training-data-crawler",
+      "name": "cohere-training-data-crawler",
+      "company": "Cohere",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Diffbot",
+      "name": "Diffbot",
+      "company": "Diffbot",
+      "purpose": "mixed",
+      "allowed": true
+    },
+    {
+      "id": "omgilibot",
+      "name": "Omgilibot",
+      "company": "Webz.io",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "webzio",
+      "name": "webzio",
+      "company": "Webz.io",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Webzio-Extended",
+      "name": "Webzio-Extended",
+      "company": "Webz.io",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "ImagesiftBot",
+      "name": "ImagesiftBot",
+      "company": "The Hive",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "PanguBot",
+      "name": "PanguBot",
+      "company": "Huawei",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Kangaroo Bot",
+      "name": "Kangaroo Bot",
+      "company": "Kangaroo LLM",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "AI2Bot",
+      "name": "AI2Bot",
+      "company": "Allen Institute for AI",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "Ai2Bot-Dolma",
+      "name": "Ai2Bot-Dolma",
+      "company": "Allen Institute for AI",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "ICC-Crawler",
+      "name": "ICC-Crawler",
+      "company": "NICT",
+      "purpose": "training",
+      "allowed": true
+    },
+    {
+      "id": "VelenPublicWebCrawler",
+      "name": "VelenPublicWebCrawler",
+      "company": "Velen",
+      "purpose": "training",
+      "allowed": true
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import { metaDescriptionRule } from '../../src/rules/technical/meta-description.
 import { pageUnreachableRule } from '../../src/rules/technical/page-unreachable.js';
 import { redirectRule } from '../../src/rules/technical/redirect.js';
 import { sitemapMissingRule } from '../../src/rules/technical/sitemap-missing.js';
+import { sitemapQualityRule } from '../../src/rules/technical/sitemap-quality.js';
 import { slowResponseRule } from '../../src/rules/technical/slow-response.js';
 import { titleMissingRule } from '../../src/rules/technical/title-missing.js';
 import { makeCtx, makePage, makeRobots } from '../helpers.js';
@@ -200,6 +201,89 @@ describe('technical/redirect', () => {
 
   it('passes without a redirect', async () => {
     expect(await redirectRule.check(makeCtx())).toEqual([]);
+  });
+});
+
+describe('technical/sitemap-quality', () => {
+  const sitemap = (entries: string) =>
+    `<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries}</urlset>`;
+  const entry = (loc: string, lastmod?: string) =>
+    `<url><loc>${loc}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`;
+  const serving = (body: string, status = 200) => ({
+    fetchPage: async (u: string) => makePage({ url: u, finalUrl: u, status, html: body }),
+  });
+
+  it('warns when a robots-declared sitemap does not resolve', async () => {
+    const ctx = makeCtx({
+      robots: makeRobots('User-agent: *\nAllow: /\n\nSitemap: https://example.com/sm.xml\n'),
+      ...serving('', 404),
+    });
+    const findings = await sitemapQualityRule.check(ctx);
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('warn');
+    expect(findings[0]!.evidence).toContain('/sm.xml');
+  });
+
+  it('does not double-report a missing convention-path sitemap', async () => {
+    // No robots Sitemap directive: sitemap-missing owns the absence warning.
+    const ctx = makeCtx(serving('', 404));
+    expect(await sitemapQualityRule.check(ctx)).toEqual([]);
+  });
+
+  it('warns when the sitemap serves HTML instead of XML', async () => {
+    const ctx = makeCtx(serving('<!doctype html><html><body>not a sitemap</body></html>'));
+    const findings = await sitemapQualityRule.check(ctx);
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toMatch(/did not parse/i);
+  });
+
+  it('warns when a urlset has no <url> entries', async () => {
+    const ctx = makeCtx(serving(sitemap('')));
+    const findings = await sitemapQualityRule.check(ctx);
+    expect(findings[0]!.message).toMatch(/no <url> entries/i);
+  });
+
+  it('warns when most URLs lack <lastmod>', async () => {
+    const body = sitemap(
+      entry('https://example.com/a', '2024-01-01') +
+        entry('https://example.com/b') +
+        entry('https://example.com/c') +
+        entry('https://example.com/d'),
+    );
+    const findings = await sitemapQualityRule.check(makeCtx(serving(body)));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('warn');
+    expect(findings[0]!.message).toContain('3 of 4');
+  });
+
+  it('informs when the newest <lastmod> is over 2 years old', async () => {
+    const body = sitemap(
+      entry('https://example.com/a', '2019-05-01') + entry('https://example.com/b', '2020-02-02'),
+    );
+    const findings = await sitemapQualityRule.check(makeCtx(serving(body)));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('info');
+    expect(findings[0]!.evidence).toContain('2020-02-02');
+  });
+
+  it('passes on a healthy sitemap and on a sitemap index', async () => {
+    const fresh = new Date().toISOString().slice(0, 10);
+    const good = sitemap(entry('https://example.com/a', fresh) + entry('https://example.com/b'));
+    // 1/2 lastmod coverage meets the threshold.
+    expect(await sitemapQualityRule.check(makeCtx(serving(good)))).toEqual([]);
+
+    const index =
+      '<?xml version="1.0"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><sitemap><loc>https://example.com/a.xml</loc></sitemap></sitemapindex>';
+    expect(await sitemapQualityRule.check(makeCtx(serving(index)))).toEqual([]);
+  });
+
+  it('returns [] when the fetch throws', async () => {
+    const ctx = makeCtx({
+      fetchPage: async () => {
+        throw new Error('budget exhausted');
+      },
+    });
+    expect(await sitemapQualityRule.check(ctx)).toEqual([]);
   });
 });
 

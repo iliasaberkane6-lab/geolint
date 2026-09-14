@@ -147,8 +147,10 @@ export interface RuleContext {
   llmsTxt: LlmsTxtData | null;
   options: ResolvedScanOptions;
   /**
-   * Fetch an additional same-origin page (sitemap, nested llms-full.txt...).
-   * Rate-limited via options.maxExtraFetches; throws when the budget is exhausted.
+   * Fetch an additional page within the audit's scope (sitemap, nested
+   * llms-full.txt…); a few rules may also sample cross-origin links
+   * (llms-txt/broken-links). Rate-limited via options.maxExtraFetches;
+   * throws when the budget is exhausted.
    */
   fetchPage: (url: string) => Promise<PageData>;
 }

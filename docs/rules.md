@@ -1,6 +1,6 @@
 # geolint rules
 
-geolint ships **45 rules** across 5 categories.
+geolint ships **51 rules** across 5 categories.
 Each rule documents what it checks, why it matters for AI search visibility, and how to fix violations.
 
 ## AI Crawler Access
@@ -147,6 +147,13 @@ llms.txt is a curated link index, not a control file — User-agent/Disallow lin
 
 The spec requires exactly one H1 (the project name) as the first element — multiple H1s make the file ambiguous to parse.
 
+<a id="rule-llms-txt-ai-manifest"></a>
+### `llms-txt/ai-manifest` — Emerging AI manifest files (agents.json, ai.txt)
+
+**Severity:** 🔵 info
+
+Beyond llms.txt, conventions like /agents.json, /ai.txt and /.well-known/ai-plugin.json are proposed ways to declare AI-facing metadata. None is settled — presence is worth knowing about, absence is not a defect.
+
 ## Structured Data
 
 <a id="rule-schema-no-jsonld"></a>
@@ -190,6 +197,13 @@ Organization markup grounds your site to a real-world entity. Answer engines use
 **Severity:** 🔵 info
 
 BreadcrumbList tells crawlers where a page sits in the site hierarchy, giving AI systems context about topic relationships — useful when they decide which page of yours to cite.
+
+<a id="rule-schema-required-fields"></a>
+### `schema/required-fields` — Typed entities carry their key fields
+
+**Severity:** 🟡 warn
+
+A FAQPage without mainEntity, an Organization without a name or a Product without offers gives engines the shell of an entity but nothing to extract — incomplete typed data rarely earns citations.
 
 ## Citability
 
@@ -255,6 +269,27 @@ Lists, tables and definition lists are the easiest content for AI systems to lif
 **Severity:** 🔵 info
 
 The lang attribute tells AI systems (and translation layers inside them) which language the content is in — a basic signal for correct citation and answer localization.
+
+<a id="rule-content-answer-first"></a>
+### `content/answer-first` — Page leads with a direct answer
+
+**Severity:** 🔵 info
+
+Answer engines favor pages that state the answer up front: the first paragraph after the H1 is the most-quoted span on the page. Leading with navigation, a hero image or a one-line teaser gives extractors nothing to cite.
+
+<a id="rule-content-self-contained-paragraphs"></a>
+### `content/self-contained-paragraphs` — Paragraphs are self-contained
+
+**Severity:** 🔵 info
+
+Answer engines quote individual chunks, not whole pages. Paragraphs that open with "as mentioned above" or a bare pronoun lose their meaning when lifted out of context — self-contained paragraphs survive extraction.
+
+<a id="rule-content-stale-dates"></a>
+### `content/stale-dates` — Dates look fresh to answer engines
+
+**Severity:** 🔵 info
+
+A visible date that is years old tells answer engines the content is stale — they preferentially cite recently dated pages for freshness-sensitive questions.
 
 ## Technical Foundation
 
@@ -327,6 +362,13 @@ Redirects are fine, but they cost crawl budget and can mask canonical problems. 
 **Severity:** 🔴 error
 
 AI crawlers and answer engines prefer secure origins; several decline to index or cite plain-HTTP pages.
+
+<a id="rule-technical-sitemap-quality"></a>
+### `technical/sitemap-quality` — Sitemap is usable XML with fresh lastmod hints
+
+**Severity:** 🟡 warn
+
+A sitemap that returns HTML, fails to parse or carries stale lastmod dates wastes crawler budget and can mislead freshness judgments — AI crawlers use it to prioritize what to ingest.
 
 ---
 

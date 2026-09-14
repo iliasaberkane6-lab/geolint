@@ -9,6 +9,7 @@ import { staleTokensRule } from './ai-crawler/stale-tokens.js';
 import { trainingBotsBlockedRule } from './ai-crawler/training-bots-blocked.js';
 import { userFetchBypassRule } from './ai-crawler/user-fetch-bypass.js';
 import { wildcardBlockAllRule } from './ai-crawler/wildcard-block-all.js';
+import { answerFirstRule } from './content/answer-first.js';
 import { imagesNoAltRule } from './content/images-no-alt.js';
 import { langMissingRule } from './content/lang-missing.js';
 import { missingDatesRule } from './content/missing-dates.js';
@@ -17,7 +18,10 @@ import { noDataPointsRule } from './content/no-data-points.js';
 import { noH1Rule } from './content/no-h1.js';
 import { noQuestionHeadingsRule } from './content/no-question-headings.js';
 import { noStructureRule } from './content/no-structure.js';
+import { selfContainedParagraphsRule } from './content/self-contained-paragraphs.js';
+import { staleDatesRule } from './content/stale-dates.js';
 import { thinContentRule } from './content/thin-content.js';
+import { aiManifestRule } from './llms-txt/ai-manifest.js';
 import { brokenLinksRule } from './llms-txt/broken-links.js';
 import { invalidStructureRule } from './llms-txt/invalid-structure.js';
 import { llmsFullMissingRule } from './llms-txt/llms-full-missing.js';
@@ -34,6 +38,7 @@ import { noBreadcrumbRule } from './schema/no-breadcrumb.js';
 import { noFaqSchemaRule } from './schema/no-faq-schema.js';
 import { noJsonLdRule } from './schema/no-jsonld.js';
 import { noOrganizationRule } from './schema/no-organization.js';
+import { requiredFieldsRule } from './schema/required-fields.js';
 import { canonicalRule } from './technical/canonical.js';
 import { clientRenderedRule } from './technical/client-rendered.js';
 import { httpErrorRule } from './technical/http-error.js';
@@ -42,6 +47,7 @@ import { metaDescriptionRule } from './technical/meta-description.js';
 import { pageUnreachableRule } from './technical/page-unreachable.js';
 import { redirectRule } from './technical/redirect.js';
 import { sitemapMissingRule } from './technical/sitemap-missing.js';
+import { sitemapQualityRule } from './technical/sitemap-quality.js';
 import { slowResponseRule } from './technical/slow-response.js';
 import { titleMissingRule } from './technical/title-missing.js';
 
@@ -72,6 +78,7 @@ export const allRules: Rule[] = [
   optionalNotLastRule,
   robotsDirectivesRule,
   multipleH1Rule,
+  aiManifestRule,
   // schema
   noJsonLdRule,
   invalidJsonLdRule,
@@ -79,6 +86,7 @@ export const allRules: Rule[] = [
   noFaqSchemaRule,
   noOrganizationRule,
   noBreadcrumbRule,
+  requiredFieldsRule,
   // content
   thinContentRule,
   noH1Rule,
@@ -89,6 +97,9 @@ export const allRules: Rule[] = [
   imagesNoAltRule,
   noStructureRule,
   langMissingRule,
+  answerFirstRule,
+  selfContainedParagraphsRule,
+  staleDatesRule,
   // technical
   pageUnreachableRule,
   httpErrorRule,
@@ -100,6 +111,7 @@ export const allRules: Rule[] = [
   slowResponseRule,
   redirectRule,
   httpsRule,
+  sitemapQualityRule,
 ];
 
 export function ruleById(id: string): Rule | undefined {

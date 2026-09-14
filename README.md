@@ -12,6 +12,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@iliasabk/geolint"><img src="https://img.shields.io/npm/v/@iliasabk/geolint" alt="npm version"></a>
   <a href="https://github.com/iliasabk/geolint/actions/workflows/ci.yml"><img src="https://github.com/iliasabk/geolint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://securityscorecards.dev/viewer/?uri=github.com/iliasabk/geolint"><img src="https://api.securityscorecards.dev/projects/github.com/iliasabk/geolint/badge" alt="OpenSSF Scorecard"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/node-%3E%3D22-brightgreen" alt="node >= 22">
   <a href="https://www.npmjs.com/package/@iliasabk/geolint"><img src="https://img.shields.io/npm/dm/@iliasabk/geolint" alt="npm downloads"></a>
@@ -31,7 +32,7 @@ npx @iliasabk/geolint check yoursite.com
 ```
 
 geolint fetches the page, its robots.txt and llms.txt, evaluates **51 known AI
-crawler tokens** against your robots.txt, runs **45 audit rules**, and prints a
+crawler tokens** against your robots.txt, runs **51 audit rules**, and prints a
 scored report with a concrete fix for every finding.
 
 ## Why
@@ -48,7 +49,7 @@ scored report with a concrete fix for every finding.
 
 ## What it checks
 
-45 rules across 5 categories — `geolint rules` lists them all, and
+51 rules across 5 categories — `geolint rules` lists them all, and
 [docs/rules.md](docs/rules.md) documents what each rule checks, why it matters
 and how to fix violations.
 
@@ -123,7 +124,7 @@ geolint check a.com --compare b.com
 | `geolint crawl <url>` | Crawl same-origin pages and audit the whole site | `--max-pages`, `--max-depth`, `--concurrency`, `--fail-under` |
 | `geolint init <url>` | Crawl the site and generate a `llms.txt` | `-o`, `--max-pages` |
 | `geolint diff <old.json> <new.json>` | Compare two JSON reports: score delta, added/resolved findings | — |
-| `geolint rules` | List the 45 audit rules | `--category`, `--format table\|json\|markdown` |
+| `geolint rules` | List the 51 audit rules | `--category`, `--format table\|json\|markdown` |
 | `geolint bots` | List the 51 known AI crawlers and the impact of blocking each | `--format table\|json` |
 | `geolint mcp` | Run an MCP server on stdio for AI assistants | `--timeout` |
 
@@ -178,8 +179,18 @@ Commit the SVG, or regenerate a [shields endpoint JSON](docs/badges.md) in CI
 - `-f json` — the full `ScanReport`: findings, per-category scores, bot access matrix
 - `-f sarif` — SARIF 2.1.0, upload straight to GitHub code scanning
 - `-f markdown` — PR-comment/job-summary-ready tables
+- `-f html` — a self-contained interactive report (score ring, findings filter,
+  bot matrix) you can share or host anywhere
 
 Add `-o report.json` to write to a file; stdout stays clean for piping.
+
+## geolint on the real web
+
+The repo dogfoods itself: a [nightly workflow](metrics/) re-audits eight
+well-known sites and commits the scores back, and the [showcase
+site](https://iliasabk.github.io/geolint/) publishes the full interactive
+reports — github.com, anthropic.com, stripe.com and more, regenerated on every
+push to `main`.
 
 ## Programmatic API
 
@@ -280,11 +291,11 @@ geolint also ships an MCP server, a score badge and regression baselines.
 
 ## Roadmap
 
-Planned for v0.3+:
+Planned for v0.4+:
 
 - `geolint watch` — re-audit on deploys/file changes
-- More schema validators (Product, HowTo, Dataset…)
 - Custom rule API for project-specific checks
+- Deeper schema coverage (more `@type` validators)
 - Homebrew formula
 - Report localization beyond English
 

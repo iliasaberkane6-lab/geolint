@@ -52,7 +52,9 @@
     "lint:ci": "biome check .",
     "typecheck": "tsc --noEmit",
     "geolint": "tsx src/cli.ts",
-    "version": "tsx scripts/sync-version.mjs && biome check --write package.json && git add package.json package-lock.json src/core/types.ts"
+    "version": "tsx scripts/sync-version.mjs && biome check --write package.json && git add package.json package-lock.json src/core/types.ts",
+    "dogfood": "node scripts/dogfood.mjs",
+    "showcase": "npm run build && node scripts/gen-showcase.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",

@@ -22,7 +22,7 @@ on:
 permissions:
   contents: read
   security-events: write   # SARIF upload to code scanning
-  pull-requests: write     # PR comment (remove if you skip that step)
+  pull-requests: write     # sticky PR comment (remove if you set comment: 'false')
 
 jobs:
   audit:
@@ -42,39 +42,23 @@ jobs:
         with:
           url: https://example.com
           fail-under: 60
+          comment: 'true' # sticky report comment on pull requests
 
       - name: Upload SARIF to code scanning
         if: always() # keep findings even when the score gate fails
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ steps.geolint.outputs.sarif-file }}
-
-      - name: Comment the report on the PR
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const file = '${{ steps.geolint.outputs.markdown-file }}';
-            const body = fs.existsSync(file)
-              ? fs.readFileSync(file, 'utf8')
-              : 'geolint did not produce a report — see the step log.';
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `## geolint — AI-search readiness\n\n${body}`,
-            });
 ```
 
 The audit itself appears in the job log and, when `format` is `markdown`
 (the default), as a rendered job summary on the workflow run page.
 
-> **Permissions note:** `pull-requests: write` is only needed for the PR-comment
-> step, and `security-events: write` only for the SARIF upload. Drop either one
-> if you remove the matching step. On PRs from forks, `GITHUB_TOKEN` is
-> read-only — the comment step will fail there; gate it with
-> `github.event.pull_request.head.repo.fork == false` if that matters.
+> **Permissions note:** `pull-requests: write` is only needed for
+> `comment: 'true'`, and `security-events: write` only for the SARIF upload.
+> Drop either one if you remove the matching feature. On PRs from forks,
+> `GITHUB_TOKEN` is read-only — the comment step logs a warning and is skipped
+> there (it never fails the build).
 
 ## Inputs
 
@@ -89,6 +73,7 @@ The audit itself appears in the job log and, when `format` is `markdown`
 | `markdown-file` | `geolint.md`   | Path of the generated report in `format`. |
 | `version`       | `latest`       | geolint version or dist-tag run via `npx` (e.g. `0.1.0`). |
 | `timeout`       | `15000`        | Per-request fetch timeout in ms (`check` only). |
+| `comment`       | `false`        | On `pull_request` events, create/update one sticky report comment on the PR. Requires `pull-requests: write`. |
 
 ## Outputs
 
@@ -130,10 +115,39 @@ The action always writes a SARIF report. Upload it with
 `if: always()` matters: when `fail-under` fails the audit step, the SARIF file
 still exists and the upload step must not be skipped.
 
-## PR comment recipe
+## Sticky PR comment
 
-The full workflow above posts `markdown-file` as a new comment on every run.
-For a quieter PR, update one comment instead of creating many:
+Set `comment: 'true'` and the action posts the markdown report as a single
+sticky comment on the pull request — re-runs update the same comment instead
+of spamming new ones:
+
+```yaml
+permissions:
+  contents: read
+  pull-requests: write # required for the comment
+
+steps:
+  - uses: iliasabk/geolint@v1
+    with:
+      url: https://example.com
+      comment: 'true'
+```
+
+Notes:
+
+- Only runs on `pull_request` events; on `push` and friends the step is
+  skipped automatically.
+- The comment is identified by a hidden `<!-- geolint-report -->` marker and
+  carries the audited URL, a timestamp and a link to the workflow run.
+- Comment failures never fail the build — a missing `pull-requests: write`
+  permission (or a read-only token on fork PRs) produces a warning annotation.
+- Oversized reports are truncated to fit GitHub's comment limit; the full
+  report remains in the job summary.
+
+### Custom comment
+
+Need a different body or bot account? Post `markdown-file` yourself with
+`actions/github-script` instead of using `comment`:
 
 ```yaml
 - uses: actions/github-script@v7
@@ -141,34 +155,14 @@ For a quieter PR, update one comment instead of creating many:
   with:
     script: |
       const fs = require('fs');
-      const marker = '<!-- geolint-report -->';
       const file = '${{ steps.geolint.outputs.markdown-file }}';
       const report = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '_no report_';
-      const body = `${marker}\n## geolint — AI-search readiness\n\n${report}`;
-
-      const { data: comments } = await github.rest.issues.listComments({
+      await github.rest.issues.createComment({
         owner: context.repo.owner,
         repo: context.repo.repo,
         issue_number: context.issue.number,
+        body: `## geolint — AI-search readiness\n\n${report}`,
       });
-      const existing = comments.find(
-        (c) => c.user.login === 'github-actions[bot]' && c.body.includes(marker),
-      );
-      if (existing) {
-        await github.rest.issues.updateComment({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          comment_id: existing.id,
-          body,
-        });
-      } else {
-        await github.rest.issues.createComment({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          issue_number: context.issue.number,
-          body,
-        });
-      }
 ```
 
 ## Baseline drift recipe
@@ -214,8 +208,9 @@ both a floor and drift detection.
 ## Notes & limitations
 
 - The action is **composite** (shell steps only), which keeps it portable but
-  means it cannot call other actions internally — SARIF upload and PR comments
-  live in your workflow, as shown above.
+  means it cannot call other actions internally — the PR comment is a bundled
+  Node script (`comment: 'true'`), while the SARIF upload still lives in your
+  workflow, as shown above.
 - Each run performs up to three audits (JSON for outputs, SARIF and markdown
   for artifacts). For heavy sites prefer `check` over `crawl`, or raise
   `timeout`.

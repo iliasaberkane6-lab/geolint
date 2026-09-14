@@ -1,13 +1,14 @@
 import type { ScanReport, SiteReport } from '../core/types.js';
 import { renderCompare as renderCompareReport } from './compare.js';
+import { renderHtmlReport, renderHtmlSiteReport } from './html.js';
 import { renderJson } from './json.js';
 import { renderMarkdown, renderSiteMarkdown } from './markdown.js';
 import { renderPretty, renderSitePretty } from './pretty.js';
 import { renderSarif, renderSiteSarif } from './sarif.js';
 
-export type ReportFormat = 'pretty' | 'json' | 'sarif' | 'markdown';
+export type ReportFormat = 'pretty' | 'json' | 'sarif' | 'markdown' | 'html';
 
-export const REPORT_FORMATS: ReportFormat[] = ['pretty', 'json', 'sarif', 'markdown'];
+export const REPORT_FORMATS: ReportFormat[] = ['pretty', 'json', 'sarif', 'markdown', 'html'];
 
 export interface RenderOptions {
   /** Force colors on/off. Default: auto (TTY detection). */
@@ -32,6 +33,8 @@ export function renderReport(
       return renderSarif(report);
     case 'markdown':
       return renderMarkdown(report);
+    case 'html':
+      return renderHtmlReport(report, opts);
     case 'pretty':
       return renderPretty(report, opts);
   }
@@ -50,6 +53,8 @@ export function renderSiteReport(
       return renderSiteSarif(report);
     case 'markdown':
       return renderSiteMarkdown(report);
+    case 'html':
+      return renderHtmlSiteReport(report, opts);
     case 'pretty':
       return renderSitePretty(report, opts);
   }

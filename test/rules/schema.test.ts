@@ -5,6 +5,7 @@ import { noBreadcrumbRule } from '../../src/rules/schema/no-breadcrumb.js';
 import { noFaqSchemaRule } from '../../src/rules/schema/no-faq-schema.js';
 import { noJsonLdRule } from '../../src/rules/schema/no-jsonld.js';
 import { noOrganizationRule } from '../../src/rules/schema/no-organization.js';
+import { requiredFieldsRule } from '../../src/rules/schema/required-fields.js';
 import { makeCtx, makePage } from '../helpers.js';
 
 const htmlWith = (body: string, head = '') =>
@@ -139,5 +140,61 @@ describe('schema/no-breadcrumb', () => {
       html: htmlWith('<p>x</p>', jsonLd({ '@type': 'BreadcrumbList' })),
     });
     expect(await noBreadcrumbRule.check(makeCtx({ page }))).toEqual([]);
+  });
+});
+
+describe('schema/required-fields', () => {
+  it('warns when FAQPage has no mainEntity', async () => {
+    const page = makePage({ html: htmlWith('<p>x</p>', jsonLd({ '@type': 'FAQPage' })) });
+    const findings = await requiredFieldsRule.check(makeCtx({ page }));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('warn');
+    expect(findings[0]!.message).toContain('mainEntity');
+  });
+
+  it('warns when Organization has no url/logo/sameAs', async () => {
+    const page = makePage({
+      html: htmlWith('<p>x</p>', jsonLd({ '@type': 'Organization', name: 'Acme' })),
+    });
+    const findings = await requiredFieldsRule.check(makeCtx({ page }));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toContain('url or logo or sameAs');
+  });
+
+  it('warns when Product has no offers/review/aggregateRating', async () => {
+    const page = makePage({
+      html: htmlWith('<p>x</p>', jsonLd({ '@type': 'Product', name: 'Widget' })),
+    });
+    const findings = await requiredFieldsRule.check(makeCtx({ page }));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toContain('offers or review or aggregateRating');
+  });
+
+  it('walks @graph to find typed nodes', async () => {
+    const page = makePage({
+      html: htmlWith(
+        '<p>x</p>',
+        jsonLd({ '@graph': [{ '@type': 'WebPage' }, { '@type': 'HowTo', name: 'Do it' }] }),
+      ),
+    });
+    const findings = await requiredFieldsRule.check(makeCtx({ page }));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toContain('step');
+  });
+
+  it('passes on complete entities and leaves Article to missing-article-fields', async () => {
+    const ok = makePage({
+      html: htmlWith(
+        '<p>x</p>',
+        jsonLd({ '@type': 'Organization', name: 'Acme', url: 'https://acme.test' }),
+      ),
+    });
+    expect(await requiredFieldsRule.check(makeCtx({ page: ok }))).toEqual([]);
+
+    const article = makePage({
+      html: htmlWith('<p>x</p>', jsonLd({ '@type': 'Article' })),
+    });
+    expect(await requiredFieldsRule.check(makeCtx({ page: article }))).toEqual([]);
+    expect(await requiredFieldsRule.check(makeCtx({ page: null }))).toEqual([]);
   });
 });

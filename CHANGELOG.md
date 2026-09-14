@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-14
+
+### Added
+
+- **HTML report**: `-f html` renders a self-contained interactive report —
+  animated score ring, filterable findings, per-category breakdown and the
+  full bot matrix, zero external resources (see
+  [docs/reports.md](docs/reports.md)).
+- **6 new audit rules** (51 total): `technical/sitemap-quality`,
+  `schema/required-fields`, `llms-txt/ai-manifest`, `content/answer-first`,
+  `content/self-contained-paragraphs`, `content/stale-dates` — see
+  [docs/rules.md](docs/rules.md).
+- **PR comments in the GitHub Action**: `comment: 'true'` creates/updates a
+  single sticky report comment on pull_request events (requires
+  `pull-requests: write`) — see [docs/github-action.md](docs/github-action.md).
+- **Dogfooding metrics**: `.github/workflows/dogfood.yml` re-audits eight
+  well-known sites nightly and commits score badges to
+  [`metrics/`](metrics/README.md).
+- **Showcase site**: `scripts/gen-showcase.mjs` generates a static
+  "geolint on the real web" page with full HTML reports for famous sites,
+  deployed to GitHub Pages (see [docs/showcase.md](docs/showcase.md)).
+- **Contributor docs**: [docs/architecture.md](docs/architecture.md) and
+  [docs/writing-rules.md](docs/writing-rules.md).
+- Library exports: `botUa`, `renderReport`/`renderSiteReport` now accept
+  `'html'`.
+
+## [0.2.2] - 2026-09-14
+
+### Changed
+
+- Repository moved to `iliasabk/geolint` — docs, badge, SARIF and Action
+  references updated.
+
 ## [0.2.1] - 2026-09-14
 
 ### Fixed
@@ -55,7 +88,9 @@ First public release of geolint — lint your website for AI-search readiness.
 - Fetch layer with per-request timeout (`--timeout`), redirect handling and a
   bounded same-origin fetch budget for sitemap/llms-full.txt discovery.
 
-[unreleased]: https://github.com/iliasabk/geolint/compare/v0.2.1...HEAD
+[unreleased]: https://github.com/iliasabk/geolint/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/iliasabk/geolint/compare/v0.2.2...v0.3.0
+[0.2.2]: https://github.com/iliasabk/geolint/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/iliasabk/geolint/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/iliasabk/geolint/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/iliasabk/geolint/releases/tag/v0.1.0

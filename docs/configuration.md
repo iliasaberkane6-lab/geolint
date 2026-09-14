@@ -45,7 +45,7 @@ Audit a single URL. This is the command you'll use 95% of the time.
 
 | Option | Description |
 | --- | --- |
-| `-f, --format <format>` | `pretty` (default), `json`, `sarif` or `markdown` |
+| `-f, --format <format>` | `pretty` (default), `json`, `sarif`, `markdown` or `html` |
 | `-o, --output <file>` | Write the report to a file instead of stdout |
 | `--fail-under <0-100>` | Exit `1` when the overall score is below this threshold |
 | `--only <ids...>` | Run only these rule ids (space-separated, variadic) |
@@ -60,7 +60,7 @@ Audit a single URL. This is the command you'll use 95% of the time.
 | `--no-color` | Disable colored output |
 
 `--only`, `--ignore` and `--category` are *scanning* options — they filter which
-of the 45 rules run, so the score and the "checks passed" count reflect only
+of the 51 rules run, so the score and the "checks passed" count reflect only
 what ran. Rule ids are kebab-case and category-prefixed; list them with
 `geolint rules` or see [rules.md](rules.md).
 
@@ -123,7 +123,7 @@ both flags for a floor *and* drift detection.
 
 BFS-crawl same-origin links from the entry page and audit the site as a whole.
 Respects robots.txt disallows while crawling, skips off-origin links and binary
-assets. The entry page gets the full 45-rule audit; the site report aggregates
+assets. The entry page gets the full 51-rule audit; the site report aggregates
 per-page findings (multi-page findings are marked `×N pages`).
 
 | Option | Description |
@@ -131,7 +131,7 @@ per-page findings (multi-page findings are marked `×N pages`).
 | `--max-pages <n>` | Maximum pages to crawl (default: `25`) |
 | `--max-depth <n>` | Maximum link depth from the entry page (default: `3`) |
 | `--concurrency <n>` | Parallel fetches (default: `4`) |
-| `-f, --format <format>` | `pretty` (default), `json`, `sarif` or `markdown` |
+| `-f, --format <format>` | `pretty` (default), `json`, `sarif`, `markdown` or `html` |
 | `-o, --output <file>` | Write the site report to a file instead of stdout |
 | `--fail-under <0-100>` | Exit `1` when the site score is below this threshold |
 | `--timeout <ms>` | Per-request fetch timeout in ms |
@@ -186,7 +186,7 @@ code) on regressions; `diff` is the human-readable version.
 
 ## `geolint rules`
 
-Print the rule registry — all 45 rules with id, severity and title.
+Print the rule registry — all 51 rules with id, severity and title.
 
 | Option | Description |
 | --- | --- |
