@@ -5,7 +5,7 @@ AI-search readiness on every push or pull request: GEO score + grade as step
 outputs, a SARIF report for code scanning, and a markdown report for job
 summaries and PR comments.
 
-The action runs the published npm package via `npx geolint@<version>` — it does
+The action runs the published npm package via `npx @iliasabk/geolint@<version>` — it does
 not need a checkout of this repository, and it does not build from source.
 
 ## Quick start
@@ -182,7 +182,7 @@ directly for the baseline workflow:
 
 ```yaml
 # Run on main — refresh the committed baseline.
-- run: npx -y geolint@latest check https://example.com --save-baseline .geolint-baseline.json
+- run: npx -y @iliasabk/geolint@latest check https://example.com --save-baseline .geolint-baseline.json
 - run: |
     git config user.name "geolint-bot"
     git config user.email "bot@users.noreply.github.com"
@@ -193,7 +193,7 @@ directly for the baseline workflow:
 
 ```yaml
 # Run on PRs — fail on drift.
-- run: npx -y geolint@latest check https://example.com --baseline .geolint-baseline.json
+- run: npx -y @iliasabk/geolint@latest check https://example.com --baseline .geolint-baseline.json
 ```
 
 `--baseline` exits `1` when findings regress against the committed file, so no

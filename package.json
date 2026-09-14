@@ -1,5 +1,5 @@
 {
-  "name": "geolint",
+  "name": "@iliasabk/geolint",
   "version": "0.1.0",
   "description": "Lint your website for AI search readiness. Audit AI crawler access, llms.txt, structured data and citability for ChatGPT, Perplexity, Claude & co.",
   "keywords": [

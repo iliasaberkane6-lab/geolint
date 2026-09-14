@@ -70,7 +70,7 @@ rule out of the score. Try the bundled demo:
 Emit SARIF and upload it:
 
 ```bash
-npx geolint check https://example.com -f sarif -o geolint.sarif
+npx @iliasabk/geolint check https://example.com -f sarif -o geolint.sarif
 ```
 
 ```yaml

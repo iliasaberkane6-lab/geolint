@@ -64,7 +64,7 @@ body:
     attributes:
       label: Checks
       options:
-        - label: I can reproduce this on the latest released version (`npx geolint@latest`).
+        - label: I can reproduce this on the latest released version (`npx @iliasabk/geolint@latest`).
           required: true
         - label: I searched existing issues for duplicates.
           required: true

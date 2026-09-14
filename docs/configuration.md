@@ -71,28 +71,28 @@ redirecting or piping the report itself.
 
 ```bash
 # The 30-second audit
-npx geolint check yoursite.com
+npx @iliasabk/geolint check yoursite.com
 
 # CI score gate — exit 1 below 80
-npx geolint check https://example.com --fail-under 80
+npx @iliasabk/geolint check https://example.com --fail-under 80
 
 # JSON report for artifacts or `geolint diff`
-npx geolint check https://example.com -f json -o geolint-report.json
+npx @iliasabk/geolint check https://example.com -f json -o geolint-report.json
 
 # Only the AI-crawler and llms.txt categories
-npx geolint check https://example.com --category ai-crawler llms-txt
+npx @iliasabk/geolint check https://example.com --category ai-crawler llms-txt
 
 # One rule only
-npx geolint check https://example.com --only ai-crawler/search-bots-blocked
+npx @iliasabk/geolint check https://example.com --only ai-crawler/search-bots-blocked
 
 # Skip a rule that's irrelevant for your stack (e.g. http-only staging)
-npx geolint check http://staging.internal --ignore technical/https
+npx @iliasabk/geolint check http://staging.internal --ignore technical/https
 
 # Head-to-head against a competitor page
-npx geolint check a.com --compare b.com
+npx @iliasabk/geolint check a.com --compare b.com
 
 # Impersonate a crawler to test UA-gated responses
-npx geolint check https://example.com --user-agent "Mozilla/5.0 (compatible; GPTBot/1.0)"
+npx @iliasabk/geolint check https://example.com --user-agent "Mozilla/5.0 (compatible; GPTBot/1.0)"
 ```
 
 ### Compare mode
@@ -108,10 +108,10 @@ the normal report; combine with `--ignore`/`--category` to scope it.
 
 ```bash
 # On main (or before a refactor): commit a baseline of current findings
-npx geolint check https://example.com --save-baseline .geolint-baseline.json
+npx @iliasabk/geolint check https://example.com --save-baseline .geolint-baseline.json
 
 # On PRs: exit 1 when a rule that used to pass now fails
-npx geolint check https://example.com --baseline .geolint-baseline.json
+npx @iliasabk/geolint check https://example.com --baseline .geolint-baseline.json
 ```
 
 `--baseline` prints each regression and resolution to stderr
@@ -147,7 +147,7 @@ findings) and `crawl` (log progress per page). Page scans reuse the crawled
 HTML — each page is fetched once, not twice.
 
 ```bash
-npx geolint crawl https://example.com --max-pages 50 --fail-under 75
+npx @iliasabk/geolint crawl https://example.com --max-pages 50 --fail-under 75
 ```
 
 ## `geolint init <url>`
@@ -163,7 +163,7 @@ per page with absolute links. Prints to stdout unless `-o` is given.
 | `--timeout <ms>` | Per-request fetch timeout in ms |
 
 ```bash
-npx geolint init https://example.com -o public/llms.txt
+npx @iliasabk/geolint init https://example.com -o public/llms.txt
 ```
 
 The generated file is a starting point — review the section titles and prune
@@ -175,10 +175,10 @@ Compare two JSON reports produced by `check -f json -o …`. Prints the score
 delta plus added and resolved findings, grouped by rule:
 
 ```bash
-npx geolint check https://example.com -f json -o before.json
+npx @iliasabk/geolint check https://example.com -f json -o before.json
 # … deploy changes …
-npx geolint check https://example.com -f json -o after.json
-npx geolint diff before.json after.json
+npx @iliasabk/geolint check https://example.com -f json -o after.json
+npx @iliasabk/geolint diff before.json after.json
 ```
 
 No options. Use `--baseline` on `check` instead when you want a *gate* (exit
@@ -194,8 +194,8 @@ Print the rule registry — all 45 rules with id, severity and title.
 | `--format <format>` | `table` (default), `json` or `markdown` |
 
 ```bash
-npx geolint rules --category ai-crawler          # the 10 crawler-access rules
-npx geolint rules --format markdown > rules.md   # docs-ready table
+npx @iliasabk/geolint rules --category ai-crawler          # the 10 crawler-access rules
+npx @iliasabk/geolint rules --format markdown > rules.md   # docs-ready table
 ```
 
 ## `geolint bots`
@@ -253,7 +253,7 @@ supports ANSI.
 geo-audit:
   image: node:22
   script:
-    - npx -y geolint@latest check https://example.com --fail-under 80 -f markdown -o geolint.md
+    - npx -y @iliasabk/geolint@latest check https://example.com --fail-under 80 -f markdown -o geolint.md
   artifacts:
     when: always
     paths: [geolint.md]
@@ -261,7 +261,7 @@ geo-audit:
 
 ```yaml
 # .circleci/config.yml
-- run: npx -y geolint@latest check https://example.com --fail-under 80
+- run: npx -y @iliasabk/geolint@latest check https://example.com --fail-under 80
 ```
 
 On GitHub Actions prefer the composite action — it wires up SARIF upload,
@@ -270,10 +270,10 @@ job summaries and step outputs for you: [github-action.md](github-action.md).
 ## Programmatic API
 
 The CLI is a thin wrapper over the library — everything above is available
-from `import … from 'geolint'`:
+from `import … from '@iliasabk/geolint'`:
 
 ```ts
-import { scan } from 'geolint';
+import { scan } from '@iliasabk/geolint';
 
 const report = await scan('https://example.com', {
   timeout: 10_000,                       // per-request ms (default 15000)

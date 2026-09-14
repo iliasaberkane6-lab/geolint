@@ -53,7 +53,7 @@ src/
   utils/              shared helpers (colors…)
 test/                 vitest specs mirroring src/ (test/rules/, …)
 docs/                 rules.md (rule catalogue), github-action.md (CI usage)
-action.yml            the composite GitHub Action (runs `npx geolint`)
+action.yml            the composite GitHub Action (runs `npx @iliasabk/geolint`)
 ```
 
 Type contracts (`ScanReport`, `Rule`, `Finding`, `Grade`…) live in

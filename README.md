@@ -10,11 +10,11 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/geolint"><img src="https://img.shields.io/npm/v/geolint" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/@iliasabk/geolint"><img src="https://img.shields.io/npm/v/@iliasabk/geolint" alt="npm version"></a>
   <a href="https://github.com/iliasaberkane6-lab/geolint/actions/workflows/ci.yml"><img src="https://github.com/iliasaberkane6-lab/geolint/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/node-%3E%3D22-brightgreen" alt="node >= 22">
-  <a href="https://www.npmjs.com/package/geolint"><img src="https://img.shields.io/npm/dm/geolint" alt="npm downloads"></a>
+  <a href="https://www.npmjs.com/package/@iliasabk/geolint"><img src="https://img.shields.io/npm/dm/@iliasabk/geolint" alt="npm downloads"></a>
   <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome"></a>
 </p>
 
@@ -27,7 +27,7 @@
 No install, no config:
 
 ```bash
-npx geolint check yoursite.com
+npx @iliasabk/geolint check yoursite.com
 ```
 
 geolint fetches the page, its robots.txt and llms.txt, evaluates **51 known AI
@@ -153,7 +153,7 @@ scanning, and a markdown report for job summaries and PR comments. Full recipes
 ### Any other CI
 
 ```bash
-npx geolint check https://example.com --fail-under 80
+npx @iliasabk/geolint check https://example.com --fail-under 80
 ```
 
 Exit code is `1` when the score drops below the gate (or findings regress
@@ -173,7 +173,7 @@ Add `-o report.json` to write to a file; stdout stays clean for piping.
 ## Programmatic API
 
 ```ts
-import { scan } from 'geolint';
+import { scan } from '@iliasabk/geolint';
 
 const report = await scan('https://example.com', {
   ignore: ['technical/https'],
