@@ -31,7 +31,11 @@ describe('e2e: scan() against a fixture server', () => {
         { path: '/', body: DEFAULT_HTML },
         { path: '/robots.txt', body: OPEN_ROBOTS, headers: { 'content-type': 'text/plain' } },
         { path: '/llms.txt', body: VALID_LLMS, headers: { 'content-type': 'text/plain' } },
-        { path: '/sitemap.xml', body: '<urlset></urlset>', headers: { 'content-type': 'text/xml' } },
+        {
+          path: '/sitemap.xml',
+          body: '<urlset></urlset>',
+          headers: { 'content-type': 'text/xml' },
+        },
       ],
       async (origin) => {
         const report = await scan(`${origin}/`);

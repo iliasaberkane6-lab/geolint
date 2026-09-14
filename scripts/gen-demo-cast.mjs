@@ -18,16 +18,26 @@ const allLines = readFileSync(outFile, 'utf8').split('\n').slice(0, -1);
 // Condense the AI CRAWLER ACCESS matrix: keep its header + the first
 // `keep` vendor rows, replace the rest with a marked ellipsis.
 // Match markers on ANSI-stripped text — headings carry style codes.
+// biome-ignore lint/style/noControlCharactersInRegex: ANSI escape matching is the point
 const strip = (s) => s.replace(/\x1b\[[0-9;]*m/g, '');
 const matrixStart = allLines.findIndex((l) => strip(l).includes('AI CRAWLER ACCESS'));
 const findingsStart = allLines.findIndex((l) => strip(l).trimStart().startsWith('FINDINGS'));
 const KEEP_MATRIX_ROWS = 15;
 let lines;
-if (matrixStart !== -1 && findingsStart !== -1 && findingsStart - matrixStart > KEEP_MATRIX_ROWS + 2) {
+if (
+  matrixStart !== -1 &&
+  findingsStart !== -1 &&
+  findingsStart - matrixStart > KEEP_MATRIX_ROWS + 2
+) {
   const kept = allLines.slice(0, matrixStart + KEEP_MATRIX_ROWS);
   const droppedLines = allLines.slice(matrixStart + KEEP_MATRIX_ROWS, findingsStart);
   const droppedBots = droppedLines.filter((l) => /[✓✗–]/.test(strip(l))).length;
-  lines = [...kept, `      … +${droppedBots} more (run: geolint bots)`, '', ...allLines.slice(findingsStart)];
+  lines = [
+    ...kept,
+    `      … +${droppedBots} more (run: geolint bots)`,
+    '',
+    ...allLines.slice(findingsStart),
+  ];
 } else {
   lines = allLines;
 }
@@ -65,6 +75,8 @@ const header = {
   env: { TERM: 'xterm-256color', SHELL: '/bin/zsh' },
 };
 
-const cast = [JSON.stringify(header), ...events.map((e) => JSON.stringify(e))].join('\n') + '\n';
+const cast = `${[JSON.stringify(header), ...events.map((e) => JSON.stringify(e))].join('\n')}\n`;
 writeFileSync(castFile, cast);
-console.log(`wrote ${castFile} (${events.length} events, ${t.toFixed(1)}s, ${WIDTH}x${HEIGHT}, ${lines.length} lines)`);
+console.log(
+  `wrote ${castFile} (${events.length} events, ${t.toFixed(1)}s, ${WIDTH}x${HEIGHT}, ${lines.length} lines)`,
+);

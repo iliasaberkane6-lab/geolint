@@ -13,8 +13,10 @@ describe('normalizeUrl', () => {
   });
 
   it('treats host:port as a hostname, not a scheme', () => {
-    expect(normalizeUrl('localhost:3000')).toBe('https://localhost:3000/');
-    expect(normalizeUrl('127.0.0.1:8080/a')).toBe('https://127.0.0.1:8080/a');
+    expect(normalizeUrl('example.com:8443/a')).toBe('https://example.com:8443/a');
+    // Loopback dev servers almost never serve TLS — default them to http.
+    expect(normalizeUrl('localhost:3000')).toBe('http://localhost:3000/');
+    expect(normalizeUrl('127.0.0.1:8080/a')).toBe('http://127.0.0.1:8080/a');
   });
 
   it('rejects non-http(s) schemes and garbage', () => {

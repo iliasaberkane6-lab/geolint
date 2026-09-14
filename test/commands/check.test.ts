@@ -30,10 +30,10 @@ describe('runCheck', () => {
   it('normalizes bare hostnames and host:port inputs', async () => {
     await withFixtureServer(routes, async (origin) => {
       const bare = origin.replace(/^http:\/\//, '');
-      // bare host:port is normalized to https:// — the report URL reflects
-      // the normalization even though the https fetch itself cannot succeed.
+      // bare loopback host:port is normalized to http:// and works end-to-end
       const res = await runCheck(bare, { format: 'json', ...quiet });
-      expect(res.url).toBe(`https://${bare}/`);
+      expect(res.url).toBe(`http://${bare}/`);
+      expect(res.report?.page?.status).toBe(200);
       // full http URL works end-to-end
       const ok = await runCheck(origin, { format: 'json', ...quiet });
       expect(ok.report.finalUrl).toBe(`${origin}/`);

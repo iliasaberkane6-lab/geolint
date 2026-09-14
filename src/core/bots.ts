@@ -141,7 +141,8 @@ export const AI_BOTS: AiBot[] = [
     purpose: 'search',
     robotsTxt: 'honored',
     docs: 'https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers',
-    notes: 'AI Overviews and AI Mode are served from the Search index — blocking Googlebot is the only full opt-out.',
+    notes:
+      'AI Overviews and AI Mode are served from the Search index — blocking Googlebot is the only full opt-out.',
   },
   {
     id: 'Google-Extended',
@@ -151,7 +152,8 @@ export const AI_BOTS: AiBot[] = [
     controlOnly: true,
     robotsTxt: 'honored',
     docs: 'https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers',
-    notes: 'Control token for Gemini/Vertex training — never fetches; does not affect ranking or AI Overviews.',
+    notes:
+      'Control token for Gemini/Vertex training — never fetches; does not affect ranking or AI Overviews.',
   },
   // ── Apple ───────────────────────────────────────────────────────────
   {
@@ -161,7 +163,8 @@ export const AI_BOTS: AiBot[] = [
     purpose: 'search',
     robotsTxt: 'honored',
     docs: 'https://support.apple.com/en-us/119829',
-    notes: 'Feeds Siri/Spotlight answers; falls back to Googlebot rules when no Applebot rules exist.',
+    notes:
+      'Feeds Siri/Spotlight answers; falls back to Googlebot rules when no Applebot rules exist.',
   },
   {
     id: 'Applebot-Extended',
@@ -354,7 +357,8 @@ export const AI_BOTS: AiBot[] = [
     company: 'ByteDance',
     purpose: 'mixed',
     robotsTxt: 'unverified',
-    notes: 'Highest-volume AI bot per Cloudflare data; third-party studies report robots.txt non-compliance — enforce at WAF level if blocking.',
+    notes:
+      'Highest-volume AI bot per Cloudflare data; third-party studies report robots.txt non-compliance — enforce at WAF level if blocking.',
   },
   {
     id: 'CCBot',
