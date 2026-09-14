@@ -43,7 +43,7 @@ jobs:
           fi
           # Registry propagation can lag a manual publish by minutes — a 409 on
           # a version that then becomes visible is not a real failure.
-          for i in 1 2 3 4 5 6; do
+          for i in $(seq 15); do
             sleep 20
             if npm view "${PKG}@${VER}" version --silent > /dev/null 2>&1; then
               echo "${PKG}@${VER} visible after publish conflict — treating as published."
