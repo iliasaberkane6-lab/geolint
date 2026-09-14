@@ -18,7 +18,7 @@ const allLines = readFileSync(outFile, 'utf8').split('\n').slice(0, -1);
 // Condense the AI CRAWLER ACCESS matrix: keep its header + the first
 // `keep` vendor rows, replace the rest with a marked ellipsis.
 // Match markers on ANSI-stripped text — headings carry style codes.
-// biome-ignore lint/style/noControlCharactersInRegex: ANSI escape matching is the point
+// biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI escape matching is the point
 const strip = (s) => s.replace(/\x1b\[[0-9;]*m/g, '');
 const matrixStart = allLines.findIndex((l) => strip(l).includes('AI CRAWLER ACCESS'));
 const findingsStart = allLines.findIndex((l) => strip(l).trimStart().startsWith('FINDINGS'));
