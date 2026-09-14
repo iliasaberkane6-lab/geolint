@@ -1,28 +1,29 @@
 # geolint demo — render with: vhs media/demo.tape
-# Requires the demo site running: python3 -m http.server 4173 --directory examples/demo-site
+# Requires: npm link done + demo site at :4173
+#   python3 -m http.server 4173 --directory examples/demo-site
 
 Output media/demo.gif
 
 Set Shell "zsh"
-Set FontSize 16
-Set Width 1500
-Set Height 900
+Set FontSize 15
+Set Width 1600
+Set Height 950
 Set Theme "Catppuccin Mocha"
-Set TypingSpeed 55ms
+Set TypingSpeed 50ms
 Set Padding 20
 Set WindowBar Colorful
 Set Framerate 30
 
-Type "npx geolint check localhost:4173 --ignore technical/https"
-Sleep 600ms
+Type "geolint check localhost:4173 --ignore technical/https"
+Sleep 700ms
 Enter
-Sleep 9s
+Sleep 10s
 
 Type "clear"
 Enter
-Sleep 400ms
+Sleep 500ms
 
-Type "npx geolint init localhost:4173"
-Sleep 600ms
+Type "geolint init localhost:4173"
+Sleep 700ms
 Enter
 Sleep 8s

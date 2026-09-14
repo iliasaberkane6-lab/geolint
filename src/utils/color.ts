@@ -2,8 +2,15 @@ import { styleText } from 'node:util';
 
 type Style = Parameters<typeof styleText>[0];
 
-const enabled = () =>
-  process.stdout.isTTY === true && !process.env.NO_COLOR && process.env.FORCE_COLOR !== '0';
+const enabled = () => {
+  if (process.env.NO_COLOR || process.env.FORCE_COLOR === '0') {
+    return false;
+  }
+  if (process.env.FORCE_COLOR && process.env.FORCE_COLOR !== '0') {
+    return true;
+  }
+  return process.stdout.isTTY === true;
+};
 
 /** Tiny color helper — zero deps. Falls back to plain text when not a TTY. */
 export function c(text: string, ...styles: Style[]): string {
