@@ -6,6 +6,7 @@ import {
   type RuleCategory,
   type ScanReport,
   type SiteReport,
+  VERSION,
 } from '../../src/core/types.js';
 
 export const BOTS: BotAccess[] = [
@@ -132,7 +133,7 @@ export function makeCategories(
 
 export function makeReport(overrides: Partial<ScanReport> = {}): ScanReport {
   return {
-    tool: { name: 'geolint', version: '0.1.0' },
+    tool: { name: 'geolint', version: VERSION },
     url: 'https://example.com/',
     finalUrl: 'https://example.com/',
     scannedAt: '2025-06-01T12:00:00.000Z',
@@ -183,7 +184,7 @@ export function makeSiteReport(overrides: Partial<SiteReport> = {}): SiteReport 
   ];
   const pageFindings = pages.flatMap((p) => p.findings);
   return {
-    tool: { name: 'geolint', version: '0.1.0' },
+    tool: { name: 'geolint', version: VERSION },
     url: 'https://site.example/',
     scannedAt: '2025-06-01T12:00:00.000Z',
     durationMs: 8420,

@@ -3,11 +3,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { diffReports, renderDiff, runDiff } from '../../src/commands/diff.js';
-import type { Finding, ScanReport } from '../../src/core/types.js';
+import { type Finding, type ScanReport, VERSION } from '../../src/core/types.js';
 
 function fakeReport(url: string, score: number, findings: Finding[]): ScanReport {
   return {
-    tool: { name: 'geolint', version: '0.1.0' },
+    tool: { name: 'geolint', version: VERSION },
     url,
     finalUrl: url,
     scannedAt: '2024-01-01T00:00:00.000Z',

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { VERSION } from '../../src/core/types.js';
 import { renderReport, renderSiteReport } from '../../src/reporters/index.js';
 import { makeReport, makeSiteReport } from './fixtures.js';
 
@@ -41,7 +42,7 @@ describe('sarif — ScanReport', () => {
     expect(doc.version).toBe('2.1.0');
     expect(doc.$schema).toBe('https://json.schemastore.org/sarif-2.1.0.json');
     expect(run.tool.driver.name).toBe('geolint');
-    expect(run.tool.driver.version).toBe('0.1.0');
+    expect(run.tool.driver.version).toBe(VERSION);
     expect(run.tool.driver.informationUri).toContain('github.com');
   });
 

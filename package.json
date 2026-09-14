@@ -51,7 +51,8 @@
     "lint": "biome check --write .",
     "lint:ci": "biome check .",
     "typecheck": "tsc --noEmit",
-    "geolint": "tsx src/cli.ts"
+    "geolint": "tsx src/cli.ts",
+    "version": "tsx scripts/sync-version.mjs && biome check --write package.json && git add package.json package-lock.json src/core/types.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",

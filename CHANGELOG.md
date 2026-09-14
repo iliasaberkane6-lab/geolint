@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-14
+
+### Fixed
+
+- `--version`, SARIF reports and MCP `serverInfo` reported a stale version:
+  `VERSION` is now synced from `package.json` by the `npm version` lifecycle.
+
 ## [0.2.0] - 2026-09-14
 
 ### Added
@@ -48,6 +55,7 @@ First public release of geolint — lint your website for AI-search readiness.
 - Fetch layer with per-request timeout (`--timeout`), redirect handling and a
   bounded same-origin fetch budget for sitemap/llms-full.txt discovery.
 
-[unreleased]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/iliasaberkane6-lab/geolint/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/iliasaberkane6-lab/geolint/releases/tag/v0.1.0
