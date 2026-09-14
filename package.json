@@ -39,10 +39,7 @@
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist",
-    "action.yml"
-  ],
+  "files": ["dist", "action.yml"],
   "engines": {
     "node": ">=22"
   },
