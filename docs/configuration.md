@@ -222,11 +222,12 @@ A page that can't be fetched is **not** an exit-2 crash: the scan completes,
 
 | Variable | Effect |
 | --- | --- |
-| `NO_COLOR` | Any value disables colored output (equivalent to `--no-color` on `check`/`crawl`). |
-| `FORCE_COLOR` | `FORCE_COLOR=0` also disables colors; other values don't force color on a non-TTY. |
+| `NO_COLOR` | Any value disables colored output (equivalent to `--no-color` on `check`/`crawl`). Wins over `FORCE_COLOR`. |
+| `FORCE_COLOR` | `0` disables colors; any other value forces colors on, even when piped. |
 
 Colors auto-disable when stdout isn't a TTY, so piped/CI output is clean
-without any flags.
+without any flags — and `FORCE_COLOR=1` is how you keep them in a CI log that
+supports ANSI.
 
 ## npm scripts and non-GitHub CI
 

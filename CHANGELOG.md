@@ -17,8 +17,9 @@ First public release of geolint — lint your website for AI-search readiness.
   with `--max-pages`, `--max-depth`, `--concurrency`), `init` (generate
   `llms.txt`), `diff` (compare two reports), `rules` (list audit rules) and
   `bots` (show per-bot AI crawler access).
-- **~37 audit rules** across five categories: AI crawler access, llms.txt,
-  structured data, citability and technical foundation.
+- **45 audit rules** across five categories: AI crawler access, llms.txt,
+  structured data, citability and technical foundation (see
+  [docs/rules.md](docs/rules.md)).
 - **Reporters**: `pretty` (terminal), `json`, `sarif` (code scanning) and
   `markdown` (PR comments, job summaries) via `--format` / `--output`.
 - **Score gate**: `--fail-under <0-100>` plus exit codes `0`/`1`/`2` for CI.

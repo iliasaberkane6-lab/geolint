@@ -180,7 +180,7 @@ const report = await scan('https://example.com', {
   timeout: 10_000,
 });
 
-console.log(report.score, report.grade);          // 86 'B'
+console.log(report.score, report.grade);          // e.g. 86 'B'
 for (const f of report.findings) {
   console.log(f.severity, f.ruleId, f.message, f.fix);
 }

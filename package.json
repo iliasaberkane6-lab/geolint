@@ -21,6 +21,12 @@
   ],
   "license": "MIT",
   "author": "Ilias Aberkane",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iliasaberkane/geolint.git"
+  },
+  "homepage": "https://github.com/iliasaberkane/geolint#readme",
+  "bugs": "https://github.com/iliasaberkane/geolint/issues",
   "type": "module",
   "bin": {
     "geolint": "dist/cli.js"
