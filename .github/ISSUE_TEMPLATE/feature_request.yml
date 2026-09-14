@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Ideas are welcome! For a new audit rule, please also check
-        [docs/rules.md](https://github.com/iliasaberkane/geolint/blob/main/docs/rules.md)
+        [docs/rules.md](https://github.com/iliasaberkane6-lab/geolint/blob/main/docs/rules.md)
         to see if it already exists.
 
   - type: dropdown

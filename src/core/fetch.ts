@@ -12,7 +12,7 @@ export class FetchError extends Error {
   }
 }
 
-export const DEFAULT_UA = `Mozilla/5.0 (compatible; ${TOOL_NAME}/${VERSION}; +https://github.com/iliasaberkane/geolint)`;
+export const DEFAULT_UA = `Mozilla/5.0 (compatible; ${TOOL_NAME}/${VERSION}; +https://github.com/iliasaberkane6-lab/geolint)`;
 
 /** Pattern used by rules when they simulate an AI crawler fetching the page. */
 export function botUa(token: string): string {

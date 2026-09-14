@@ -3,14 +3,14 @@
 Thanks for helping make the web more readable for AI search engines!
 This guide covers local development, project layout and how to extend the
 auditor. For bugs and features, please use the
-[issue templates](https://github.com/iliasaberkane/geolint/issues/new/choose).
+[issue templates](https://github.com/iliasaberkane6-lab/geolint/issues/new/choose).
 
 ## Development setup
 
 Requirements: **Node.js >= 22** and npm.
 
 ```bash
-git clone https://github.com/iliasaberkane/geolint.git
+git clone https://github.com/iliasaberkane6-lab/geolint.git
 cd geolint
 npm install
 

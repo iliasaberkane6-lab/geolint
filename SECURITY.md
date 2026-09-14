@@ -15,7 +15,7 @@ minor line.
 ## Reporting a vulnerability
 
 **Please do not open a public issue.** Report privately via
-[GitHub private vulnerability reporting](https://github.com/iliasaberkane/geolint/security/advisories/new)
+[GitHub private vulnerability reporting](https://github.com/iliasaberkane6-lab/geolint/security/advisories/new)
 (the "Report a vulnerability" button on the repo's Security tab).
 
 Please include:

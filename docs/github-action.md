@@ -38,7 +38,7 @@ jobs:
 
       - name: Audit AI-search readiness
         id: geolint
-        uses: iliasaberkane/geolint@v1
+        uses: iliasaberkane6-lab/geolint@v1
         with:
           url: https://example.com
           fail-under: 60
@@ -102,7 +102,7 @@ The audit itself appears in the job log and, when `format` is `markdown`
 Example — gate a deployment on the score:
 
 ```yaml
-- uses: iliasaberkane/geolint@v1
+- uses: iliasaberkane6-lab/geolint@v1
   id: geolint
   with:
     url: https://example.com
@@ -202,10 +202,10 @@ both a floor and drift detection.
 
 ## Pinning advice
 
-- `uses: iliasaberkane/geolint@v1` tracks the latest `v1.x` release — the
+- `uses: iliasaberkane6-lab/geolint@v1` tracks the latest `v1.x` release — the
   maintainer floats the `v1` tag on every release. Recommended for most users.
 - For maximum supply-chain safety, pin the full commit SHA:
-  `uses: iliasaberkane/geolint@<sha> # v1.0.0`
+  `uses: iliasaberkane6-lab/geolint@<sha> # v1.0.0`
 - The `version` input pins the *CLI* version independently of the action
   version (`version: 0.1.0`). Pinning the action SHA but leaving
   `version: latest` still executes the newest published CLI — set both for a
