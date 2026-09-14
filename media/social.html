@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1280px; height: 640px;
+    background: #0d1117;
+    font-family: 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 64px 72px;
+    position: relative; overflow: hidden;
+  }
+  .glow {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: .35;
+  }
+  .glow.a { width: 500px; height: 500px; background: #22d3ee; top: -200px; right: -100px; }
+  .glow.b { width: 400px; height: 400px; background: #818cf8; bottom: -180px; left: 300px; }
+  .left { position: relative; z-index: 1; }
+  .logo { width: 120px; height: 120px; margin-bottom: 28px; }
+  h1 { font-size: 92px; font-weight: 700; color: #e6edf3; letter-spacing: -3px; line-height: 1; }
+  h1 .grad { background: linear-gradient(90deg,#22d3ee,#818cf8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .tag { margin-top: 22px; font-size: 30px; color: #8b949e; }
+  .tag b { color: #3fb950; font-weight: 600; }
+  .term {
+    position: relative; z-index: 1;
+    width: 520px; background: #161b22; border: 1px solid #30363d;
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,.55);
+  }
+  .term-bar { display: flex; gap: 8px; padding: 14px 16px; border-bottom: 1px solid #30363d; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .term-body { padding: 22px 24px; font-size: 19px; line-height: 1.75; color: #c9d1d9; }
+  .p { color: #7ee787; }
+  .dim { color: #8b949e; }
+  .score { color: #f0f6fc; font-weight: 700; }
+  .bar { color: #3fb950; letter-spacing: 1px; }
+  .ok { color: #3fb950; } .warn { color: #d29922; } .err { color: #f85149; }
+</style>
+</head>
+<body>
+  <div class="glow a"></div><div class="glow b"></div>
+  <div class="left">
+    <img class="logo" src="logo.svg">
+    <h1>geo<span class="grad">lint</span></h1>
+    <div class="tag">Lint your website for <b>AI&nbsp;search</b>.<br>Be citable by ChatGPT, Perplexity &amp; Claude.</div>
+  </div>
+  <div class="term">
+    <div class="term-bar"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div></div>
+    <div class="term-body">
+      <div><span class="p">$</span> npx geolint check yoursite.com</div>
+      <div class="dim">scanning 38 rules…</div>
+      <div class="score">87/100 · Grade B</div>
+      <div class="bar">██████████████████░░░░░░</div>
+      <div><span class="err">✗</span> llms-txt/missing</div>
+      <div><span class="warn">⚠</span> ai-crawler/perplexitybot blocked</div>
+      <div><span class="ok">✓</span> 24 rules passed</div>
+    </div>
+  </div>
+</body>
+</html>

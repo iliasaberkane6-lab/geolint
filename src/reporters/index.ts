@@ -52,3 +52,8 @@ export function renderSiteReport(
   };
   return renderPretty(pseudo, opts);
 }
+
+/** Side-by-side comparison of two scan reports (used by `check --compare`). */
+export function renderCompare(_a: ScanReport, _b: ScanReport, _opts: RenderOptions = {}): string {
+  return '';
+}

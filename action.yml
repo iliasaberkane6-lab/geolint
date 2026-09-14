@@ -1,0 +1,177 @@
+name: geolint
+description: >-
+  Audit a website for AI-search readiness (GEO): AI crawler access, llms.txt,
+  structured data and citability. Produces a GEO score, a SARIF report for code
+  scanning and a markdown report for job summaries / PR comments.
+author: iliasaberkane
+branding:
+  icon: check-circle
+  color: green
+
+# This is a composite action: it can only contain `run` steps (no `uses:`).
+# Callers that want SARIF upload or PR comments add those steps in their own
+# workflow — see docs/github-action.md for ready-to-copy recipes.
+inputs:
+  url:
+    description: 'URL to audit (e.g. https://example.com).'
+    required: true
+  format:
+    description: >-
+      Report format written to markdown-file: pretty, json, sarif or markdown.
+      markdown renders best in job summaries and PR comments.
+    required: false
+    default: 'markdown'
+  fail-under:
+    description: >-
+      Fail the step when the GEO score is below this value (0-100).
+      0 disables the score gate.
+    required: false
+    default: '0'
+  crawl:
+    description: >-
+      When 'true', run `geolint crawl` (multi-page audit) instead of
+      `geolint check` (single page).
+    required: false
+    default: 'false'
+  max-pages:
+    description: 'Maximum number of pages to audit when crawl is enabled.'
+    required: false
+    default: '25'
+  sarif-file:
+    description: 'Path where the SARIF report is written.'
+    required: false
+    default: 'geolint.sarif'
+  markdown-file:
+    description: 'Path where the report in `format` is written.'
+    required: false
+    default: 'geolint.md'
+  version:
+    description: >-
+      geolint version or npm dist-tag to run (e.g. latest, 0.1.0).
+      Passed to `npx geolint@<version>`.
+    required: false
+    default: 'latest'
+  timeout:
+    description: 'Per-request fetch timeout in milliseconds (check command).'
+    required: false
+    default: '15000'
+
+outputs:
+  score:
+    description: 'GEO score, 0-100. Empty when the audit produced no report.'
+    value: ${{ steps.audit.outputs.score }}
+  grade:
+    description: 'GEO grade (A, B, C, D or F). Empty when the audit produced no report.'
+    value: ${{ steps.audit.outputs.grade }}
+  sarif-file:
+    description: 'Path to the generated SARIF report.'
+    value: ${{ steps.audit.outputs.sarif-file }}
+  markdown-file:
+    description: 'Path to the generated report in the requested `format`.'
+    value: ${{ steps.audit.outputs.markdown-file }}
+
+runs:
+  using: composite
+  steps:
+    # One step runs the CLI once per artifact. The first (JSON) run is
+    # canonical: --fail-under is applied there and its exit code (0 pass,
+    # 1 below gate, 2 runtime error) is captured and re-raised by the final
+    # step so artifact generation and the job summary always run.
+    - name: Run geolint audit
+      id: audit
+      shell: bash
+      env:
+        GEOLINT_URL: ${{ inputs.url }}
+        GEOLINT_FORMAT: ${{ inputs.format }}
+        GEOLINT_FAIL_UNDER: ${{ inputs.fail-under }}
+        GEOLINT_CRAWL: ${{ inputs.crawl }}
+        GEOLINT_MAX_PAGES: ${{ inputs.max-pages }}
+        GEOLINT_SARIF_FILE: ${{ inputs.sarif-file }}
+        GEOLINT_MD_FILE: ${{ inputs.markdown-file }}
+        GEOLINT_VERSION: ${{ inputs.version }}
+        GEOLINT_TIMEOUT: ${{ inputs.timeout }}
+      run: |
+        JSON_FILE="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/geolint-report.json"
+        PKG="geolint@${GEOLINT_VERSION}"
+
+        if [ "${GEOLINT_CRAWL}" = "true" ]; then
+          CMD=(crawl "${GEOLINT_URL}" --max-pages "${GEOLINT_MAX_PAGES}")
+        else
+          CMD=(check "${GEOLINT_URL}" --timeout "${GEOLINT_TIMEOUT}")
+        fi
+
+        echo "Running: npx ${PKG} ${CMD[*]}"
+
+        # Canonical run: JSON report to a temp file, gate applied here.
+        # `run` steps use `bash -e`: disable errexit so a non-zero exit code
+        # (score below the gate, runtime error) is captured, not fatal.
+        set +e
+        npx -y "${PKG}" "${CMD[@]}" --format json --output "${JSON_FILE}" \
+          --fail-under "${GEOLINT_FAIL_UNDER}"
+        code=$?
+        set -e
+        echo "exit-code=${code}" >> "${GITHUB_OUTPUT}"
+
+        # Extract score + grade from the JSON report. `node` is always on
+        # PATH (the runner itself is Node); no jq dependency needed.
+        if [ -s "${JSON_FILE}" ]; then
+          GEOLINT_JSON_FILE="${JSON_FILE}" node -e '
+            const fs = require("fs");
+            try {
+              const r = JSON.parse(fs.readFileSync(process.env.GEOLINT_JSON_FILE, "utf8"));
+              const out = process.env.GITHUB_OUTPUT;
+              if (r.score !== undefined) fs.appendFileSync(out, `score=${r.score}\n`);
+              if (r.grade !== undefined) fs.appendFileSync(out, `grade=${r.grade}\n`);
+            } catch (err) {
+              console.error(`geolint: could not parse JSON report: ${err.message}`);
+            }
+          '
+        else
+          echo "::warning::geolint produced no JSON report (exit code ${code})."
+        fi
+
+        # Artifact runs never influence the outcome of the action.
+        if [ "${code}" != "2" ]; then
+          npx -y "${PKG}" "${CMD[@]}" --format sarif --output "${GEOLINT_SARIF_FILE}" \
+            || echo "::warning::geolint could not write the SARIF report."
+          npx -y "${PKG}" "${CMD[@]}" --format "${GEOLINT_FORMAT}" --output "${GEOLINT_MD_FILE}" \
+            || echo "::warning::geolint could not write the ${GEOLINT_FORMAT} report."
+        fi
+
+        echo "sarif-file=${GEOLINT_SARIF_FILE}" >> "${GITHUB_OUTPUT}"
+        echo "markdown-file=${GEOLINT_MD_FILE}" >> "${GITHUB_OUTPUT}"
+
+        # Human-readable log without another scan.
+        if [ -f "${GEOLINT_MD_FILE}" ]; then
+          echo "::group::geolint report"
+          cat "${GEOLINT_MD_FILE}"
+          echo "::endgroup::"
+        fi
+
+    - name: Write job summary
+      if: always()
+      shell: bash
+      env:
+        GEOLINT_MD_FILE: ${{ inputs.markdown-file }}
+        GEOLINT_URL: ${{ inputs.url }}
+      run: |
+        if [ -f "${GEOLINT_MD_FILE}" ]; then
+          cat "${GEOLINT_MD_FILE}" >> "${GITHUB_STEP_SUMMARY}"
+        else
+          echo "**geolint** could not audit ${GEOLINT_URL} — see the step log for details." \
+            >> "${GITHUB_STEP_SUMMARY}"
+        fi
+
+    - name: Enforce score gate
+      if: always()
+      shell: bash
+      env:
+        GEOLINT_EXIT_CODE: ${{ steps.audit.outputs.exit-code }}
+      run: |
+        code="${GEOLINT_EXIT_CODE:-2}"
+        case "${code}" in
+          0) echo "geolint passed." ;;
+          1) echo "geolint failed: score below --fail-under or baseline regressions." ;;
+          *) echo "geolint failed with a runtime error (exit code ${code})." ;;
+        esac
+        exit "${code}"
