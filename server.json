@@ -1,0 +1,19 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.iliasabk/geolint",
+  "description": "ESLint-style linter for AI-search readiness: audits robots.txt across 51 AI crawler tokens, llms.txt, structured data and citability. 51 rules, SARIF, GitHub Action.",
+  "version": "0.3.1",
+  "repository": {
+    "url": "https://github.com/iliasabk/geolint",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@iliasabk/geolint",
+      "version": "0.3.1",
+      "transport": { "type": "stdio" },
+      "runtimeArguments": ["mcp"]
+    }
+  ]
+}
