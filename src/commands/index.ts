@@ -21,6 +21,8 @@ interface CheckCliOptions {
   compare?: string;
   saveBaseline?: string;
   baseline?: string;
+  badge?: boolean | string;
+  badgeEndpoint?: string;
   verbose: boolean;
   color: boolean;
 }
@@ -79,6 +81,11 @@ export function registerCommands(program: Command): void {
     .option('--compare <url2>', 'also scan this URL and render a comparison')
     .option('--save-baseline <file>', 'write a findings baseline JSON to this file')
     .option('--baseline <file>', 'fail on findings that are new since this baseline')
+    .option(
+      '--badge [file]',
+      'write an SVG score badge (default: geolint-badge.svg) and print a README snippet',
+    )
+    .option('--badge-endpoint <file>', 'write a shields.io endpoint JSON for a live badge')
     .option('--verbose', 'include info-severity findings in the output', false)
     .option('--no-color', 'disable colored output')
     .action(async (url: string, opts: CheckCliOptions) => {
@@ -93,6 +100,8 @@ export function registerCommands(program: Command): void {
         compare: opts.compare,
         saveBaseline: opts.saveBaseline,
         baseline: opts.baseline,
+        badge: opts.badge,
+        badgeEndpoint: opts.badgeEndpoint,
         verbose: opts.verbose,
         color: opts.color ? undefined : false,
       });
@@ -196,5 +205,15 @@ export function registerCommands(program: Command): void {
     )
     .action((opts: { format: BotsFormat }) => {
       process.stdout.write(`${listBots({ format: opts.format })}\n`);
+    });
+
+  program
+    .command('mcp')
+    .description('Start an MCP (Model Context Protocol) server on stdio for AI assistants')
+    .option('--timeout <ms>', 'per-tool-call timeout in milliseconds', parsePositiveInt)
+    .action(async (opts: { timeout?: number }) => {
+      // Lazy import: keep `check`/`crawl` startup free of MCP SDK load time.
+      const { runMcpServer } = await import('./mcp.js');
+      await runMcpServer({ timeout: opts.timeout });
     });
 }

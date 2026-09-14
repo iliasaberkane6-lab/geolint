@@ -54,8 +54,10 @@
     "geolint": "tsx src/cli.ts"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "cheerio": "^1.1.2",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

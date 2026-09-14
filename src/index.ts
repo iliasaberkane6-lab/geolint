@@ -17,6 +17,7 @@ export { parseLlmsTxt, fetchLlmsTxt } from './core/llmstxt.js';
 export { extractJsonLd, jsonLdTypes, CITABILITY_SCHEMA_TYPES } from './core/schema.js';
 export { AI_BOTS, botsByPurpose, citationCriticalBots } from './core/bots.js';
 export { computeScore, gradeFor } from './core/score.js';
+export { badgeSvg, shieldsEndpointJson, badgeMarkdown } from './core/badge.js';
 export { allRules, ruleById } from './rules/index.js';
 export { renderReport, renderSiteReport, REPORT_FORMATS } from './reporters/index.js';
 export type { ReportFormat, RenderOptions } from './reporters/index.js';

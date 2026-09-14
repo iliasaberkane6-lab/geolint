@@ -1,4 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
+import { isAbsolute } from 'node:path';
+import { badgeMarkdown, badgeSvg, shieldsEndpointJson } from '../core/badge.js';
 import { scan, unknownRuleIds } from '../core/engine.js';
 import type { Finding, RuleCategory, ScanOptions, ScanReport, Severity } from '../core/types.js';
 import {
@@ -39,6 +41,10 @@ export interface CheckOptions {
   saveBaseline?: string;
   /** Compare findings against this baseline file. */
   baseline?: string;
+  /** Write an SVG badge to this path (or 'geolint-badge.svg' when true) and emit a markdown snippet via status. */
+  badge?: boolean | string;
+  /** Also write a shields.io endpoint JSON to this path (for CI-regenerated live badges). */
+  badgeEndpoint?: string;
   verbose?: boolean;
   color?: boolean;
   /** Status sink for progress lines. Defaults to stderr for pretty, silent otherwise. */
@@ -54,6 +60,8 @@ export interface CheckResult {
   regressions: Finding[];
   /** Baseline findings that no longer occur. */
   resolved: BaselineFinding[];
+  /** Paths of badge files written (empty when none). */
+  badgeFiles: string[];
   /** 1 when score < failUnder or regressions exist, else 0. */
   exitCode: 0 | 1;
 }
@@ -188,6 +196,42 @@ export async function runCheck(input: string, opts: CheckOptions = {}): Promise<
     status(`baseline written to ${opts.saveBaseline}`);
   }
 
+  const badgeFiles: string[] = [];
+  let badgeImageUrl: string | undefined;
+  if (opts.badge) {
+    const badgePath = opts.badge === true ? 'geolint-badge.svg' : opts.badge;
+    try {
+      await writeFile(badgePath, `${badgeSvg(report.score, report.grade)}\n`, 'utf8');
+    } catch (err) {
+      throw new Error(
+        `cannot write badge file ${badgePath}: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
+    badgeFiles.push(badgePath);
+    status(`badge written to ${badgePath}`);
+    // A committed relative path works as the README image; an absolute one doesn't.
+    if (!isAbsolute(badgePath)) {
+      badgeImageUrl = badgePath;
+    }
+  }
+  if (opts.badgeEndpoint) {
+    try {
+      await writeFile(opts.badgeEndpoint, shieldsEndpointJson(report.score, report.grade), 'utf8');
+    } catch (err) {
+      throw new Error(
+        `cannot write badge endpoint ${opts.badgeEndpoint}: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
+    badgeFiles.push(opts.badgeEndpoint);
+    status(`shields endpoint written to ${opts.badgeEndpoint}`);
+  }
+  if (badgeFiles.length > 0) {
+    status(
+      `badge markdown — paste it into your README:\n${badgeMarkdown(report.score, report.grade, { imageUrl: badgeImageUrl })}`,
+    );
+    status('tip: regenerate the badge in CI so the score never goes stale — see docs/badges.md');
+  }
+
   let exitCode: 0 | 1 = 0;
   if (opts.failUnder !== undefined && report.score < opts.failUnder) {
     exitCode = 1;
@@ -195,5 +239,5 @@ export async function runCheck(input: string, opts: CheckOptions = {}): Promise<
   if (regressions.length > 0) {
     exitCode = 1;
   }
-  return { url, report, output, regressions, resolved, exitCode };
+  return { url, report, output, regressions, resolved, badgeFiles, exitCode };
 }

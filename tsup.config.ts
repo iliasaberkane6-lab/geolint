@@ -7,5 +7,7 @@ export default defineConfig({
   dts: { entry: { index: 'src/index.ts' } },
   sourcemap: true,
   clean: true,
-  splitting: false,
+  // Keep the `geolint mcp` dynamic import a real lazy chunk so the MCP SDK
+  // only loads when the mcp command runs — `check`/`crawl` stay fast.
+  splitting: true,
 });
