@@ -2,11 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { aiManifestRule } from '../../src/rules/llms-txt/ai-manifest.js';
 import { brokenLinksRule } from '../../src/rules/llms-txt/broken-links.js';
 import { invalidStructureRule } from '../../src/rules/llms-txt/invalid-structure.js';
+import { linksBlockedByRobotsRule } from '../../src/rules/llms-txt/links-blocked-by-robots.js';
 import { llmsFullMissingRule } from '../../src/rules/llms-txt/llms-full-missing.js';
 import { llmsTxtMissingRule } from '../../src/rules/llms-txt/missing.js';
 import { noSectionsRule } from '../../src/rules/llms-txt/no-sections.js';
 import { noSummaryRule } from '../../src/rules/llms-txt/no-summary.js';
-import { makeCtx, makeLlmsTxt, makePage } from '../helpers.js';
+import { makeCtx, makeLlmsTxt, makePage, makeRobots } from '../helpers.js';
 
 const VALID = `# Example Site
 > An example site used in tests.
@@ -212,5 +213,62 @@ describe('llms-txt/ai-manifest', () => {
       },
     });
     expect(await aiManifestRule.check(ctx)).toEqual([]);
+  });
+});
+
+describe('llms-txt/links-blocked-by-robots', () => {
+  const LLMS = `# Site
+> Sum.
+
+## Docs
+- [Guide](https://example.com/docs/guide)
+- [Other site](https://other.example.net/page)
+`;
+
+  it('warns when a same-origin link is disallowed for a search bot', async () => {
+    const ctx = makeCtx({
+      llmsTxt: makeLlmsTxt(LLMS),
+      robots: makeRobots('User-agent: OAI-SearchBot\nDisallow: /docs\n\nUser-agent: *\nAllow: /\n'),
+    });
+    const findings = await linksBlockedByRobotsRule.check(ctx);
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.severity).toBe('warn');
+    expect(findings[0]!.evidence).toContain('docs/guide');
+    expect(findings[0]!.evidence).toContain('OAI-SearchBot');
+  });
+
+  it('ignores blocks that only target training bots', async () => {
+    const ctx = makeCtx({
+      llmsTxt: makeLlmsTxt(LLMS),
+      robots: makeRobots('User-agent: GPTBot\nDisallow: /\n'),
+    });
+    expect(await linksBlockedByRobotsRule.check(ctx)).toEqual([]);
+  });
+
+  it('ignores cross-origin links — their robots.txt lives elsewhere', async () => {
+    const ctx = makeCtx({
+      llmsTxt: makeLlmsTxt(`# S\n> s\n\n## L\n- [x](https://other.example.net/a)\n`),
+      robots: makeRobots('User-agent: OAI-SearchBot\nDisallow: /\n'),
+    });
+    expect(await linksBlockedByRobotsRule.check(ctx)).toEqual([]);
+  });
+
+  it('passes when linked paths are allowed', async () => {
+    const ctx = makeCtx({
+      llmsTxt: makeLlmsTxt(LLMS),
+      robots: makeRobots('User-agent: *\nAllow: /\n'),
+    });
+    expect(await linksBlockedByRobotsRule.check(ctx)).toEqual([]);
+  });
+
+  it('returns [] without llms.txt or robots groups', async () => {
+    expect(await linksBlockedByRobotsRule.check(makeCtx({ llmsTxt: makeLlmsTxt(null) }))).toEqual(
+      [],
+    );
+    expect(
+      await linksBlockedByRobotsRule.check(
+        makeCtx({ llmsTxt: makeLlmsTxt(LLMS), robots: makeRobots(null) }),
+      ),
+    ).toEqual([]);
   });
 });

@@ -2,14 +2,14 @@
 
 > ESLint for AI search. Audits websites for AI-search readiness — AI crawler
 > access across 51 bot tokens, llms.txt, structured data and citability —
-> with 51 rules, a 0–100 score, SARIF output, an MCP server and a GitHub
+> with 52 rules, a 0–100 score, SARIF output, an MCP server and a GitHub
 > Action. Run `npx @iliasabk/geolint check yoursite.com`.
 
 ## Docs
 
 - [README](https://github.com/iliasabk/geolint#readme): quickstart, features and CLI overview
 - [CLI reference](https://github.com/iliasabk/geolint/blob/main/docs/configuration.md): every command, flag and exit code
-- [Rule catalogue](https://github.com/iliasabk/geolint/blob/main/docs/rules.md): all 51 rules with severity and fixes
+- [Rule catalogue](https://github.com/iliasabk/geolint/blob/main/docs/rules.md): all 52 rules with severity and fixes
 - [MCP server](https://github.com/iliasabk/geolint/blob/main/docs/mcp.md): audit sites from Claude Desktop, Cursor, VS Code, Windsurf
 - [GitHub Action](https://github.com/iliasabk/geolint/blob/main/docs/github-action.md): SARIF upload, PR comments, score gates
 - [Architecture](https://github.com/iliasabk/geolint/blob/main/docs/architecture.md): scan pipeline and engine internals

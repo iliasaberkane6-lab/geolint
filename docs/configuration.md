@@ -63,7 +63,7 @@ Audit a single URL. This is the command you'll use 95% of the time.
 | `--no-color` | Disable colored output |
 
 `--only`, `--ignore` and `--category` are *scanning* options — they filter which
-of the 51 rules run, so the score and the "checks passed" count reflect only
+of the 52 rules run, so the score and the "checks passed" count reflect only
 what ran. Rule ids are kebab-case and category-prefixed; list them with
 `geolint rules` or see [rules.md](rules.md).
 
@@ -189,7 +189,7 @@ code) on regressions; `diff` is the human-readable version.
 
 ## `geolint rules`
 
-Print the rule registry — all 51 rules with id, severity and title.
+Print the rule registry — all 52 rules with id, severity and title.
 
 | Option | Description |
 | --- | --- |

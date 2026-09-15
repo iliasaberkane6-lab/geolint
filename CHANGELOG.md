@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `llms-txt/links-blocked-by-robots` — warns when llms.txt recommends pages
+  that robots.txt disallows for AI answer/fetch bots (#2).
+
 ## [0.3.0] - 2026-09-14
 
 ### Added

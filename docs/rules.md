@@ -1,6 +1,6 @@
 # geolint rules
 
-geolint ships **51 rules** across 5 categories.
+geolint ships **52 rules** across 5 categories.
 Each rule documents what it checks, why it matters for AI search visibility, and how to fix violations.
 
 ## AI Crawler Access
@@ -111,6 +111,13 @@ The point of llms.txt is its curated link lists under H2 sections — they are t
 **Severity:** 🟡 warn
 
 llms.txt is a curated map for AI consumers — links that 404 or fail to load send crawlers into dead ends and waste their fetch budget.
+
+<a id="rule-llms-txt-links-blocked-by-robots"></a>
+### `llms-txt/links-blocked-by-robots` — llms.txt links are crawlable by AI bots
+
+**Severity:** 🟡 warn
+
+llms.txt is a curated map handed to AI consumers — when robots.txt disallows the very pages it recommends, crawlers follow the map into a wall and the file backfires.
 
 <a id="rule-llms-txt-llms-full-missing"></a>
 ### `llms-txt/llms-full-missing` — llms-full.txt companion file

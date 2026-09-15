@@ -24,6 +24,7 @@ import { thinContentRule } from './content/thin-content.js';
 import { aiManifestRule } from './llms-txt/ai-manifest.js';
 import { brokenLinksRule } from './llms-txt/broken-links.js';
 import { invalidStructureRule } from './llms-txt/invalid-structure.js';
+import { linksBlockedByRobotsRule } from './llms-txt/links-blocked-by-robots.js';
 import { llmsFullMissingRule } from './llms-txt/llms-full-missing.js';
 import { llmsTxtMissingRule } from './llms-txt/missing.js';
 import { multipleH1Rule } from './llms-txt/multiple-h1.js';
@@ -73,6 +74,7 @@ export const allRules: Rule[] = [
   noSummaryRule,
   noSectionsRule,
   brokenLinksRule,
+  linksBlockedByRobotsRule,
   llmsFullMissingRule,
   relativeLinksRule,
   optionalNotLastRule,

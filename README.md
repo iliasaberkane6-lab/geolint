@@ -36,7 +36,7 @@ npx @iliasabk/geolint check yoursite.com
 ```
 
 geolint fetches the page, its robots.txt and llms.txt, evaluates **51 known AI
-crawler tokens** against your robots.txt, runs **51 audit rules**, and prints a
+crawler tokens** against your robots.txt, runs **52 audit rules**, and prints a
 scored report with a concrete fix for every finding.
 
 ## Why
@@ -53,7 +53,7 @@ scored report with a concrete fix for every finding.
 
 ## What it checks
 
-51 rules across 5 categories — `geolint rules` lists them all, and
+52 rules across 5 categories — `geolint rules` lists them all, and
 [docs/rules.md](docs/rules.md) documents what each rule checks, why it matters
 and how to fix violations.
 
@@ -128,7 +128,7 @@ geolint check a.com --compare b.com
 | `geolint crawl <url>` | Crawl same-origin pages and audit the whole site | `--max-pages`, `--max-depth`, `--concurrency`, `--fail-under` |
 | `geolint init <url>` | Crawl the site and generate a `llms.txt` | `-o`, `--max-pages` |
 | `geolint diff <old.json> <new.json>` | Compare two JSON reports: score delta, added/resolved findings | — |
-| `geolint rules` | List the 51 audit rules | `--category`, `--format table\|json\|markdown` |
+| `geolint rules` | List the 52 audit rules | `--category`, `--format table\|json\|markdown` |
 | `geolint bots` | List the 51 known AI crawlers and the impact of blocking each | `--format table\|json` |
 | `geolint mcp` | Run an MCP server on stdio for AI assistants | `--timeout` |
 
