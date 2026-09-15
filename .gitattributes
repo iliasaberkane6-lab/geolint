@@ -1,0 +1,18 @@
+# Normalize line endings: always LF in the repository and on checkout.
+# Biome's formatter requires LF, so CRLF conversion (e.g. by core.autocrlf
+# on Windows) breaks `npm run lint:ci` for contributors and local CI runs.
+* text=auto eol=lf
+
+# Windows scripts (if any are added later) must keep CRLF:
+# *.bat text eol=crlf
+# *.cmd text eol=crlf
+
+# Binary assets — never normalize:
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
