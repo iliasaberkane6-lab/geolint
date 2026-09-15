@@ -247,7 +247,7 @@ describe('llms-txt/links-blocked-by-robots', () => {
 
   it('ignores cross-origin links — their robots.txt lives elsewhere', async () => {
     const ctx = makeCtx({
-      llmsTxt: makeLlmsTxt(`# S\n> s\n\n## L\n- [x](https://other.example.net/a)\n`),
+      llmsTxt: makeLlmsTxt('# S\n> s\n\n## L\n- [x](https://other.example.net/a)\n'),
       robots: makeRobots('User-agent: OAI-SearchBot\nDisallow: /\n'),
     });
     expect(await linksBlockedByRobotsRule.check(ctx)).toEqual([]);
