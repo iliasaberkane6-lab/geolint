@@ -1,16 +1,16 @@
 {
   "tool": {
     "name": "geolint",
-    "version": "0.2.2"
+    "version": "0.3.2"
   },
   "url": "https://openai.com/",
   "finalUrl": "https://openai.com/",
-  "scannedAt": "2026-09-14T12:04:25.351Z",
-  "durationMs": 794,
+  "scannedAt": "2026-09-15T10:03:56.571Z",
+  "durationMs": 1360,
   "page": {
     "status": 403,
     "contentType": "text/html; charset=UTF-8",
-    "timingMs": 58,
+    "timingMs": 107,
     "redirected": false
   },
   "robots": {

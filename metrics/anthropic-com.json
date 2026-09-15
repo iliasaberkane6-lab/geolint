@@ -1,16 +1,16 @@
 {
   "tool": {
     "name": "geolint",
-    "version": "0.2.2"
+    "version": "0.3.2"
   },
   "url": "https://www.anthropic.com/",
   "finalUrl": "https://www.anthropic.com/",
-  "scannedAt": "2026-09-14T12:04:23.806Z",
-  "durationMs": 1350,
+  "scannedAt": "2026-09-15T10:03:55.098Z",
+  "durationMs": 1285,
   "page": {
     "status": 200,
     "contentType": "text/html; charset=utf-8",
-    "timingMs": 116,
+    "timingMs": 140,
     "redirected": false
   },
   "robots": {

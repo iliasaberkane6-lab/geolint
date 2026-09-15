@@ -1,16 +1,16 @@
 {
   "tool": {
     "name": "geolint",
-    "version": "0.2.2"
+    "version": "0.3.2"
   },
   "url": "https://stripe.com/",
   "finalUrl": "https://stripe.com/",
-  "scannedAt": "2026-09-14T12:04:26.332Z",
-  "durationMs": 890,
+  "scannedAt": "2026-09-15T10:03:58.123Z",
+  "durationMs": 2428,
   "page": {
     "status": 200,
     "contentType": "text/html; charset=utf-8",
-    "timingMs": 120,
+    "timingMs": 225,
     "redirected": false
   },
   "robots": {

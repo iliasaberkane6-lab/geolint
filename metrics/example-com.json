@@ -1,16 +1,16 @@
 {
   "tool": {
     "name": "geolint",
-    "version": "0.2.2"
+    "version": "0.3.2"
   },
   "url": "https://example.com/",
   "finalUrl": "https://example.com/",
-  "scannedAt": "2026-09-14T12:04:31.395Z",
-  "durationMs": 191,
+  "scannedAt": "2026-09-15T10:04:03.749Z",
+  "durationMs": 300,
   "page": {
     "status": 200,
     "contentType": "text/html",
-    "timingMs": 66,
+    "timingMs": 101,
     "redirected": false
   },
   "robots": {

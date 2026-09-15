@@ -1,16 +1,16 @@
 {
   "tool": {
     "name": "geolint",
-    "version": "0.2.2"
+    "version": "0.3.2"
   },
   "url": "https://news.ycombinator.com/",
   "finalUrl": "https://news.ycombinator.com/",
-  "scannedAt": "2026-09-14T12:04:30.425Z",
-  "durationMs": 777,
+  "scannedAt": "2026-09-15T10:04:02.858Z",
+  "durationMs": 700,
   "page": {
     "status": 200,
     "contentType": "text/html; charset=utf-8",
-    "timingMs": 242,
+    "timingMs": 194,
     "redirected": false
   },
   "robots": {
